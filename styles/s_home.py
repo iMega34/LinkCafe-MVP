@@ -101,7 +101,7 @@ class SHome:
             height = styles["logo"]["height"],
             alignment = ft.alignment.center,
             content = ft.Image(
-                src = "logo.png",
+                src = "/images/logo.png",
             )
         )
 
