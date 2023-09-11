@@ -1,10 +1,15 @@
 
+import sys
 import flet as ft
 
 from views.router import Router
 
+# Evita la creación de archivos .pyc, debido a problemas de arranque
+# en algunas ejecuciones
+sys.dont_write_bytecode = True
 
-def main(page: ft.Page):
+
+def main(page: ft.Page) -> None:
     # Propiedades de la página
     page.title = "eTrigali"
     page.bgcolor = "#1F2129"

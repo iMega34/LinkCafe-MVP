@@ -1,8 +1,14 @@
 
+import sys
 import flet as ft
 
 from styles.s_cashier import SCashier
 from styles.styles import Styles
+
+
+# Evita la creación de archivos .pyc, debido a problemas de arranque
+# en algunas ejecuciones
+sys.dont_write_bytecode = True
 
 
 def Cashier(page: ft.Page) -> ft.Column:
@@ -26,6 +32,8 @@ def Cashier(page: ft.Page) -> ft.Column:
 
     # Resumen de la comanda
     order_summary: ft.Container = SCashier.order_summary()
+    # Catálogo de productos
+    catalog: ft.Container = SCashier.catalog()
 
     # Propiedades de la página de caja
     view: ft.Column = ft.Column(
@@ -38,13 +46,13 @@ def Cashier(page: ft.Page) -> ft.Column:
                 padding = 25,
                 expand = True,
                 content = ft.Row(
-                    alignment = ft.MainAxisAlignment.END,
+                    alignment = ft.MainAxisAlignment.SPACE_EVENLY,
                     controls = [
                         # Catálogo de productos
                         ft.Column(
                             alignment = ft.MainAxisAlignment.CENTER,
                             controls = [
-
+                                catalog
                             ]
                         ),
                         # Resumen de la comanda

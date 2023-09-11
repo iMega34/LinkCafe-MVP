@@ -1,8 +1,14 @@
 
+import sys
 import flet as ft
 
 from styles.s_home import SHome
 from styles.styles import Styles
+
+
+# Evita la creación de archivos .pyc, debido a problemas de arranque
+# en algunas ejecuciones
+sys.dont_write_bytecode = True
 
 
 def Home(page: ft.Page) -> ft.Column:

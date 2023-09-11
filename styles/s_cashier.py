@@ -1,7 +1,24 @@
 
+import sys
 import flet as ft
 
 from styles.styles import Styles
+from other.product import Product
+from other.product_card import ProductCard
+from other.product_table import ProductTable
+
+
+# Evita la creación de archivos .pyc, debido a problemas de arranque
+# en algunas ejecuciones
+sys.dont_write_bytecode = True
+
+# Tabla de productos
+product_table: ProductTable = ProductTable("catalogo.xlsm").get_table()
+products: list[Product] = []
+
+for index, row in product_table.iterrows():
+    product: Product = Product(index, row["Nombre"], row["Precio"], row["Cantidad"], row["Imagen"], row["Información adicional"])
+    products.append(product)
 
 
 # Propiedades de estilo de la página de caja, se obtienen de la clase
@@ -15,11 +32,66 @@ class SCashier:
     del archivo :file:`cashier.py` para la creación de la página de caja.
     """
 
+    def catalog() -> ft.Container:
+        """
+        Catálogo de productos.
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`catalog_content` (ft.Container): Catálogo de productos.
+        """
+
+        _counter: int = 0
+        _row_counter: int = 0
+
+        # Se crea un objeto de la clase ft.ListView para contener los productos del catálogo
+        list_view: ft.ListView = ft.ListView(
+            spacing = styles["catalog"]["spacing"],
+            width = styles["catalog"]["width_list"],
+            height = styles["catalog"]["height"],
+        )
+
+        # Se crean objetos de la clase ft.Row para contener los productos del catálogo en grupos de 4
+        for row in range(len(products)):
+            list_row: ft.Row = ft.Row(spacing = 1)
+            for product in range(4):
+                try:
+                    if _row_counter % 2 != 0:
+                        product_card: ft.Card = ProductCard(products[_counter]).build_card(True)
+                    else:
+                        product_card: ft.Card = ProductCard(products[_counter]).build_card(False)
+                    list_row.controls.append(product_card)
+                    _counter += 1
+
+                except IndexError:
+                    break
+
+            list_view.controls.append(list_row)
+            _row_counter += 1
+
+        # Se coloca el objeto list_view dentro de un objeto de la clase ft.Container
+        catalog_content: ft.Container = ft.Container(
+            width = styles["catalog"]["width_container"],
+            alignment = ft.alignment.center,
+            content = list_view,
+            border = ft.border.all(1, "#FF0000"),
+        )
+
+        return catalog_content
+
+
+
     def _title() -> ft.Container:
         """
         Título del cuadro de resumen.
 
-        Regresa un objeto de la clase :class:`ft.Container`
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`title_content` (ft.Container): Título del cuadro de resumen.
         """
 
         title_content: ft.Container = ft.Container(
@@ -61,7 +133,11 @@ class SCashier:
         """
         Subtítulo del cuadro de resumen.
 
-        Regresa un objeto de la clase :class:`ft.Container`
+        Parametros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`subtitle_content` (ft.Container): Subtítulo del cuadro de resumen.
         """
 
         subtitle_content: ft.Container = ft.Container(
@@ -69,7 +145,7 @@ class SCashier:
                 controls = [
                     ft.Divider(
                         color = styles["subtitle"]["divider_color"],
-                        height = 1,
+                        height = 2,
                     ),
                     ft.Text(
                         "Resumen",
@@ -82,7 +158,7 @@ class SCashier:
                     ),
                     ft.Divider(
                         color = styles["subtitle"]["divider_color"],
-                        height = 1,
+                        height = 2,
                     ),
                 ]
             )
@@ -99,7 +175,11 @@ class SCashier:
         la opción de enviar la comanda al Sistema Digital de Comandas (SCD) y la opción
         de cancelar la comanda.
 
-        Regresa un objeto de la clase :class:`ft.Container`
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`order_summary_content` (ft.Container): Resumen de la comanda.
         """
 
         # Título del cuadro de resumen y cuadro de texto para el nombre del cliente

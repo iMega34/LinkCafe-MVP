@@ -1,7 +1,13 @@
 
+import sys
 import flet as ft
 
 from styles.styles import Styles
+
+
+# Evita la creación de archivos .pyc, debido a problemas de arranque
+# en algunas ejecuciones
+sys.dont_write_bytecode = True
 
 
 # Propiedades de estilo de la página de inicio, se obtienen de la clase
@@ -101,7 +107,7 @@ class SHome:
             height = styles["logo"]["height"],
             alignment = ft.alignment.center,
             content = ft.Image(
-                src = "logo.png",
+                src = "/images/logo.png",
             )
         )
 
