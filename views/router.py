@@ -2,6 +2,8 @@
 import flet as ft
 
 from views.home import Home
+from views.cashier import Cashier
+from views.orders import Orders
 
 
 class Router:
@@ -13,12 +15,13 @@ class Router:
         self.page = page
         self.routes = {
             "/": Home(page),                        # Página de inicio
-            # "/cashier": Cashier(page),              # Página de caja
-            # "/orders": Orders(page),                # Página de órdenes
+            "/cashier": Cashier(page),              # Página de caja
+            "/orders": Orders(page),                # Página de órdenes
             # "/digital_menu": DigitalMenu(page),     # Página de menú digital
         }
         # Página y ruta predeterminadas del router
         self.view = ft.Container(
+            border = ft.border.all(1, "#FFFFFF"),
             content = self.routes["/"],
             expand = True
         )

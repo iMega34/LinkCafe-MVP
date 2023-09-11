@@ -9,7 +9,9 @@ def main(page: ft.Page):
     page.title = "eTrigali"
     page.bgcolor = "#1F2129"
     page.fonts = {
-        "Arbutus" : "/fonts/ArbutusSlab-Regular.ttf"
+        "Arbutus Slab" : "/fonts/ArbutusSlab-Regular.ttf",
+        "Tenor Sans" : "/fonts/TenorSans-Regular.ttf",
+        "Forum" : "/fonts/Forum-Regular.ttf"
     }
 
     # Declara del router de la clase Router para redireccionar 
@@ -23,12 +25,8 @@ def main(page: ft.Page):
     page.add(router.view)
 
     # Se accede a la pagina de inicio
-    page.go('/')
+    page.go('/cashier')
 
 
 if __name__ == "__main__":
-    ft.app(
-        target = main,
-        view = ft.AppView.WEB_BROWSER,
-        assets_dir = "assets"
-    )
+    ft.app(target = main, view = ft.AppView.WEB_BROWSER, assets_dir = "assets")
