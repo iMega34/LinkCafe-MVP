@@ -1,7 +1,7 @@
 
 # Proyecto de digitalización de Trigali
 
-Sistema digital de caja, corte de caja, comandas digitales y menú digital para la cafetería Trigali.
+eTrigali. Sistema de caja, comandas y menú digital
 
 ## Descripción
 
