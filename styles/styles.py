@@ -1,12 +1,4 @@
 
-import sys
-
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
-
-
 class Styles:
     """
     Contiene las propiedades de estilo de la página web
@@ -49,6 +41,28 @@ class Styles:
                 "bgcolor_1" : "#2F374C",
                 "bgcolor_2" : "#4F5467",
                 "hover_color" : "#1F2129",
+                "tint_color" : "#404040",
+                "shadow_color" : "#656565",
+            },
+            "ticket_card" : {
+                "height" : 75,
+                "padding" : 10,
+                "text_field_width" : 50,
+                "text_field_border_radius" : 15,
+                "text_field_font_size" : 18,
+                "text_field_bgcolor" : "#302C30",
+                "text_field_border_color" : "#00000000",
+                "remove_button_size" : 40,
+                "name_width" : 300,
+                "price_width" : 100,
+                "border_radius" : 25,
+                "font_size" : 28,
+                "font" : "Arbutus Slab",
+                "font_color" : "#FFFFFF",
+                "button_color" : "#FFFFFF",
+                "remove_button_color" : "#FF0000",
+                "color" : "#202026",
+                "hover_color" : "#25242B",
                 "tint_color" : "#404040",
                 "shadow_color" : "#656565",
             }
@@ -121,7 +135,8 @@ class Styles:
             },
             "card" : {
                 "width" : 700,
-                "height" : 690,
+                "height" : 750,
+                "padding" : 25,
                 "border_radius" : 50,
                 "bgcolor" : "#25242B",
                 "font_color" : "#FFFFFF"
@@ -140,7 +155,11 @@ class Styles:
                 "font_size" : 35,
                 "font_color" : "#FFFFFF",
                 "divider_color" : "#2F374C"
-            }
+            },
+            "product_list" : {
+                "width" : 650,
+                "height" : 365,
+            },
         }
 
         return cashier_style_dict
