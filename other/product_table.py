@@ -1,11 +1,5 @@
 
-import sys
 import pandas as pd
-
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
 
 
 class ProductTable:
@@ -21,20 +15,20 @@ class ProductTable:
         - Columna E: Dirección de la imagen del producto en assets/images
         - Columna F: Información adicional del producto como alérgenos, etc.
 
-    El archivo de Excel debe tener el nombre :file:`catalogo.xlsx` y debe estar en la raíz del proyecto.
+    El archivo de Excel debe tener el nombre :file:`catalogo.xlsm` y debe estar en la raíz del proyecto.
 
     Esta clase es de suma importancia pues es la base para el funcionamiento de la aplicación.
     """
 
     def __init__(self, spreadsheet_file: str) -> None:
         """
-        Construye la tabla de productos a partir del archivo de Excel :file:`catalogo.xlsx`.
+        Construye la tabla de productos a partir del archivo de Excel :file:`catalogo.xlsm`.
 
         Parámetros:
             - :param:`spreadsheet_file` (str): Nombre del archivo de Excel que contiene el catálogo de productos.
         
         Regresa:
-            - :return:`None`
+            - No regresa ningún valor.
         """
 
         self._table: pd.DataFrame = pd.DataFrame()
@@ -47,13 +41,13 @@ class ProductTable:
 
     def get_table(self) -> pd.DataFrame:
         """
-        Regresa la tabla de productos construida a partir del archivo de Excel :file:`catalogo.xlsx`.
+        Regresa la tabla de productos construida a partir del archivo de Excel :file:`catalogo.xlsm`.
 
         Parámetros:
             - No recibe parámetros.
 
         Regresa:
-            - :return:`self._table` (pd.DataFrame): Tabla de productos construida a partir del archivo de Excel :file:`catalogo.xlsx`.
+            - :return:`self._table` (pd.DataFrame): Tabla de productos construida a partir del archivo de Excel :file:`catalogo.xlsm`.
         """
 
         return self._table
