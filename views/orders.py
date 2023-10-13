@@ -1,14 +1,8 @@
 
-import sys
 import flet as ft
 
 from styles.s_cashier import SCashier
 from styles.styles import Styles
-
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
 
 
 def Orders(page: ft.Page) -> ft.Column:

@@ -1,14 +1,7 @@
 
-import sys
 import flet as ft
 
 from styles.s_cashier import SCashier
-from styles.styles import Styles
-
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
 
 
 def Cashier(page: ft.Page) -> ft.Column:
@@ -24,16 +17,12 @@ def Cashier(page: ft.Page) -> ft.Column:
     Regresa un objeto de la clase :class:`ft.Column`
     """
 
-    # Propiedades de estilo de la página de caja, se obtienen de la clase
-    # Styles del archivo styles.py
-    styles: dict[str] = Styles.cashier_styles()
-
     # Catálogo de productos
 
     # Resumen de la comanda
     order_summary: ft.Container = SCashier.order_summary()
     # Catálogo de productos
-    catalog: ft.Container = SCashier.catalog()
+    catalog: ft.Container = SCashier.catalog(page)
 
     # Propiedades de la página de caja
     view: ft.Column = ft.Column(

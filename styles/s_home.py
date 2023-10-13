@@ -1,18 +1,13 @@
 
-import sys
 import flet as ft
 
 from styles.styles import Styles
 
 
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
-
-
 # Propiedades de estilo de la página de inicio, se obtienen de la clase
 # Styles del archivo styles.py
 styles: dict[str] = Styles.home_styles()
+
 
 class SHome:
     """
@@ -76,7 +71,11 @@ class SHome:
         """
         Bienvenida a la página
 
-        Regresa un objeto de la clase :class:`ft.Container`
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`welcome_content` (ft.Container): Bienvenida a la página.
         """
 
         welcome_content: ft.Container = ft.Container(
@@ -99,7 +98,11 @@ class SHome:
         """
         Logo de la empresa
 
-        Regresa un objeto de la clase :class:`ft.Container`
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`logo_content` (ft.Container): Logo de la empresa.
         """
 
         logo_content: ft.Container = ft.Container(
@@ -118,30 +121,37 @@ class SHome:
         """
         Botón hacia a la vista de caja
 
-        Recibe un objeto de la clase :class:`ft.Page` para poder
-        realizar el redireccionamiento de vistas
+        Parámetros:
+            - :param:`page` (ft.Page): Página actual.
 
-        Regresa un objeto de la clase :class:`ft.Card`
+        Regresa:
+            - :return:`cashier_button` (ft.Card): Botón hacia a la vista de caja.
         """
 
+        # Texto del botón
+        _button_text: ft.Text = ft.Text(
+            "Caja",
+            font_family = styles["button"]["font"],
+            size = styles["button"]["font_size"],
+            color = styles["button"]["font_color"],
+            weight = ft.FontWeight.W_300,
+            text_align = ft.TextAlign.CENTER
+        )
+
+        # Botón hacia a la vista de caja
         self._cashier_button_content: ft.Container = ft.Container(
             width = styles["button"]["button_width"],
             height = styles["button"]["button_height"],
             bgcolor = styles["button"]["color"],
             border_radius = ft.border_radius.all(styles["button"]["border_radius"]),
             alignment = ft.alignment.center,
-            content = ft.Text(
-                "Caja",
-                font_family = styles["button"]["font"],
-                size = styles["button"]["font_size"],
-                color = styles["button"]["font_color"],
-                weight = ft.FontWeight.W_300,
-                text_align = ft.TextAlign.CENTER
-            ),
+            content = _button_text,
             on_hover = lambda _: self._cashier_button_on_hover(_),
             on_click = lambda _: self._cashier_button_on_click(page, _)
         )
 
+        # Se coloca el botón dentro de un objeto de la clase ft.Card para poder
+        # aplicarle el efecto de elevación
         self._cashier_button: ft.Card = ft.Card(
             elevation = 0,
             color = styles["button"]["hover_color"],
@@ -157,30 +167,37 @@ class SHome:
         """
         Botón hacia a la vista de órdenes
 
-        Recibe un objeto de la clase :class:`ft.Page` para poder
-        realizar el redireccionamiento de vistas
+        Parámetros:
+            - :param:`page` (ft.Page): Página actual.
 
-        Regresa un objeto de la clase :class:`ft.Card`
+        Regresa:
+            - :return:`orders_button` (ft.Card): Botón hacia a la vista de órdenes.
         """
 
+        # Texto del botón
+        _button_text: ft.Text = ft.Text(
+            "Comandas",
+            font_family = styles["button"]["font"],
+            size = styles["button"]["font_size"],
+            color = styles["button"]["font_color"],
+            weight = ft.FontWeight.W_300,
+            text_align = ft.TextAlign.CENTER
+        )
+
+        # Botón hacia a la vista de órdenes
         self._orders_button_content: ft.Container = ft.Container(
             width = styles["button"]["button_width"],
             height = styles["button"]["button_height"],
             bgcolor = styles["button"]["color"],
             border_radius = ft.border_radius.all(styles["button"]["border_radius"]),
             alignment = ft.alignment.center,
-            content = ft.Text(
-                "Comandas",
-                font_family = styles["button"]["font"],
-                size = styles["button"]["font_size"],
-                color = styles["button"]["font_color"],
-                weight = ft.FontWeight.W_300,
-                text_align = ft.TextAlign.CENTER
-            ),
+            content = _button_text,
             on_hover = lambda _: self._orders_button_on_hover(_),
             on_click = lambda _: self._orders_button_on_click(page, _)
         )
 
+        # Se coloca el botón dentro de un objeto de la clase ft.Card para poder
+        # aplicarle el efecto de elevación
         self._orders_button: ft.Card = ft.Card(
             elevation = 0,
             color = styles["button"]["hover_color"],

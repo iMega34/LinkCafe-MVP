@@ -1,15 +1,9 @@
 
-import sys
 import flet as ft
 
 from views.home import Home
 from views.cashier import Cashier
 from views.orders import Orders
-
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
 
 
 class Router:
