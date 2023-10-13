@@ -1,16 +1,12 @@
 
-import sys
 import flet as ft
 
 from styles.styles import Styles
 from other.product import Product
+from other.product_list import ProductList
 from other.product_card import ProductCard
 from other.product_table import ProductTable
 
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
 
 # Tabla de productos
 product_table: ProductTable = ProductTable("catalogo.xlsm").get_table()
@@ -25,6 +21,21 @@ for index, row in product_table.iterrows():
 # Styles del archivo styles.py
 styles: dict[str] = Styles.cashier_styles()
 
+# Lista de productos que se mostrarán en el resumen de la comanda
+_ticket_product_list: ProductList = ProductList()
+
+# Contenedor de la lista de productos que se mostrarán en el resumen de la comanda
+# Se crea de manera global para poder acceder a él desde la clase ProductList
+product_list_content: ft.Container = ft.Container(
+    border = ft.border.all(1, "#FF0000"),
+    width = styles["product_list"]["width"],
+    height = styles["product_list"]["height"],
+    content = ft.Column(
+        alignment = ft.MainAxisAlignment.CENTER,
+        scroll = True
+    )
+)
+
 
 class SCashier:
     """
@@ -32,12 +43,13 @@ class SCashier:
     del archivo :file:`cashier.py` para la creación de la página de caja.
     """
 
-    def catalog() -> ft.Container:
+
+    def catalog(page: ft.Page) -> ft.Container:
         """
         Catálogo de productos.
 
         Parámetros:
-            - No recibe parámetros.
+            - :param:`page` (ft.Page): Página actual.
 
         Regresa:
             - :return:`catalog_content` (ft.Container): Catálogo de productos.
@@ -59,9 +71,13 @@ class SCashier:
             for product in range(4):
                 try:
                     if _row_counter % 2 != 0:
-                        product_card: ft.Card = ProductCard(products[_counter]).build_card(True)
+                        product_card: ft.Card = ProductCard(products[_counter]).build_card(
+                            True, page, product_list_content, _ticket_product_list
+                        )
                     else:
-                        product_card: ft.Card = ProductCard(products[_counter]).build_card(False)
+                        product_card: ft.Card = ProductCard(products[_counter]).build_card(
+                            False, page, product_list_content, _ticket_product_list
+                        )
                     list_row.controls.append(product_card)
                     _counter += 1
 
@@ -82,7 +98,6 @@ class SCashier:
         return catalog_content
 
 
-
     def _title() -> ft.Container:
         """
         Título del cuadro de resumen.
@@ -94,33 +109,41 @@ class SCashier:
             - :return:`title_content` (ft.Container): Título del cuadro de resumen.
         """
 
+        # Título del cuadro de resumen
+        _title_text: ft.Text = ft.Text(
+            "Caja",
+            font_family = styles["title"]["font"],
+            size = styles["title"]["font_size_title"],
+            color = styles["title"]["font_color"],
+            weight = ft.FontWeight.W_300,
+            text_align = ft.TextAlign.CENTER
+        )
+
+        # Cuadro de texto para el nombre del cliente
+        _customer_name: ft.TextField = ft.TextField(
+            label = "Nombre del cliente",
+            label_style = ft.TextStyle(
+                font_family = styles["title"]["font"],
+                color = styles["title"]["font_color"],
+            ),
+            text_style = ft.TextStyle(
+                font_family = styles["title"]["font_customer"],
+                size = styles["title"]["font_size_customer"],
+                color = styles["title"]["font_color"],
+            ),
+            border_color = styles["title"]["text_field_border_color"],
+            border_radius = styles["title"]["text_field_border_radius"],
+        )
+
+        # Se coloca el título y el cuadro de texto para el nombre del cliente dentro
+        # de un objeto de la clase ft.Container
         title_content: ft.Container = ft.Container(
             content = ft.Row(
                 alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls = [
-                    ft.Text(
-                        "Caja",
-                        font_family = styles["title"]["font"],
-                        size = styles["title"]["font_size_title"],
-                        color = styles["title"]["font_color"],
-                        weight = ft.FontWeight.W_300,
-                        text_align = ft.TextAlign.CENTER
-                    ),
+                    _title_text,
                     ft.Container(
-                        content = ft.TextField(
-                            label = "Nombre del cliente",
-                            label_style = ft.TextStyle(
-                                font_family = styles["title"]["font"],
-                                color = styles["title"]["font_color"],
-                            ),
-                            text_style = ft.TextStyle(
-                                font_family = styles["title"]["font_customer"],
-                                size = styles["title"]["font_size_customer"],
-                                color = styles["title"]["font_color"],
-                            ),
-                            border_color = styles["title"]["text_field_border_color"],
-                            border_radius = styles["title"]["text_field_border_radius"],
-                        )
+                        content = _customer_name
                     )
                 ]
             )
@@ -140,26 +163,31 @@ class SCashier:
             - :return:`subtitle_content` (ft.Container): Subtítulo del cuadro de resumen.
         """
 
+        # Subtítulo del cuadro de resumen
+        _subtitle_text: ft.Text = ft.Text(
+            "Resumen",
+            width = styles["card"]["width"],
+            font_family = styles["subtitle"]["font"],
+            size = styles["subtitle"]["font_size"],
+            color = styles["subtitle"]["font_color"],
+            weight = ft.FontWeight.W_300,
+            text_align = ft.TextAlign.CENTER
+        )
+
+        # Divisor del subtítulo del cuadro de resumen
+        _divider: ft.Divider = ft.Divider(
+            color = styles["subtitle"]["divider_color"],
+            height = 2,
+        )
+
+        # Se colocan el subtítulo y el divisor dentro de un objeto de la
+        # clase ft.Container
         subtitle_content: ft.Container = ft.Container(
             content = ft.Column(
                 controls = [
-                    ft.Divider(
-                        color = styles["subtitle"]["divider_color"],
-                        height = 2,
-                    ),
-                    ft.Text(
-                        "Resumen",
-                        width = styles["card"]["width"],
-                        font_family = styles["subtitle"]["font"],
-                        size = styles["subtitle"]["font_size"],
-                        color = styles["subtitle"]["font_color"],
-                        weight = ft.FontWeight.W_300,
-                        text_align = ft.TextAlign.CENTER
-                    ),
-                    ft.Divider(
-                        color = styles["subtitle"]["divider_color"],
-                        height = 2,
-                    ),
+                    _divider,
+                    _subtitle_text,
+                    _divider
                 ]
             )
         )
@@ -186,12 +214,13 @@ class SCashier:
         _title: ft.Container = SCashier._title()
         # Subtítulo del cuadro de resumen
         _subtitle: ft.Container = SCashier._subtitle()
+        # Lista con el resumen de la comanda
 
         order_summary_content: ft.Container = ft.Container(
             border = ft.border.all(1, "#FF0000"),
-            padding = 25,
             width = styles["card"]["width"],
             height = styles["card"]["height"],
+            padding = styles["card"]["padding"],
             bgcolor = styles["card"]["bgcolor"],
             border_radius = ft.border_radius.all(styles["card"]["border_radius"]),
             alignment = ft.alignment.center,
@@ -201,6 +230,8 @@ class SCashier:
                     _title,
                     # Subtítulo del cuadro de resumen
                     _subtitle,
+                    # Lista con el resumen de la comanda (variable global)
+                    product_list_content,
                 ]
             )
         )
