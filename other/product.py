@@ -1,12 +1,4 @@
 
-import sys
-
-
-# Evita la creación de archivos .pyc, debido a problemas de arranque
-# en algunas ejecuciones
-sys.dont_write_bytecode = True
-
-
 class Product:
     """
     Crea objetos Producto que contienen la información de un producto en el
