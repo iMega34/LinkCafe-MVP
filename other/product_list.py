@@ -15,7 +15,24 @@ class ProductList:
         self._product_list: list[ft.Card] = []
 
 
-    def add_to_list(self, page: ft.Page, product_list_content: ft.Container, product_to_add: ft.Card) -> None:
+    def _get_product_atributes(self, product: ft.Card) -> tuple[str, str]:
+        """
+        Extrae los atributos de un producto y los regresa en una tupla.
+
+        Parámetros:
+            - :param:`product` (ft.Card): Producto del cual se extraerán los atributos.
+        
+        Regresa:
+            - :return:`product_atributes` (tuple[str, str]): Atributos del producto.
+        """
+
+        product_name: str = product.content.content.controls[1].content.value
+        product_price: str = product.content.content.controls[3].content.key
+
+        return product_name, product_price
+
+
+    def add_to_list(self, page: ft.Page, product_list_content: ft.Container, product: ft.Card) -> None:
         """
         Agrega un producto al carrito de compras y lo muestra en el resumen de la comanda.
 
@@ -31,39 +48,39 @@ class ProductList:
         """
 
         # Se obtiene el nombre del producto a agregar
-        product_to_add_name: str = product_to_add.content.content.controls[1].content.value
+        name, price = self._get_product_atributes(product)
 
         # Si el producto no está en la lista, es decir, no está en la referencia de cantidades
         # se agrega a la lista y se agrega a la referencia de cantidades
-        if product_to_add_name not in _quantity_ref_dict:
-            _quantity_ref_dict[product_to_add_name] = 1
-            self._product_list.append(product_to_add)
-            product_list_content.content.controls.append(product_to_add)
+        if name not in _quantity_ref_dict:
+            _quantity_ref_dict[name] = 1
+            self._product_list.append(product)
+            product_list_content.content.controls.append(product)
         # Si el producto ya está en la lista, es decir, ya está en la referencia de cantidades
         # se actualiza la cantidad del producto en la lista y en la referencia de cantidades
         else:
-            _quantity_ref_dict[product_to_add_name] += 1
+            _quantity_ref_dict[name] += 1
             # Se recorre la lista de productos para encontrar el producto a actualizar
             for idx, product in enumerate(self._product_list):
                 # Si el nombre del producto a actualizar es igual al nombre del producto a agregar
-                if product.content.content.controls[1].content.value == product_to_add_name:
+                product_to_search: str = product.content.content.controls[1].content.value
+                if product_to_search == name:
                     # Se actualiza la cantidad del producto en la lista del producto y la
                     # tarjeta del producto en la lista de productos
                     self._product_list.pop(idx)
-                    self._product_list.insert(idx, product_to_add)
+                    self._product_list.insert(idx, product)
                     product_list_content.content.controls.pop(idx)
-                    product_list_content.content.controls.insert(idx, product_to_add)
-                    product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[product_to_add_name]
+                    product_list_content.content.controls.insert(idx, product)
+                    product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[name]
                     # Se actualiza el subtotal del producto
-                    price: str = product_to_add.content.content.controls[3].content.key
-                    subtotal: int = int(price) * _quantity_ref_dict[product_to_add_name]
+                    subtotal: int = int(price) * _quantity_ref_dict[name]
                     product_list_content.content.controls[idx].content.content.controls[3].content.value = f"${subtotal}"
                     break
 
         page.update()
 
 
-    def add_one(self, page: ft.Page, product_list_content: ft.Container, product_to_add_one: ft.Card) -> None:
+    def add_one(self, page: ft.Page, product_list_content: ft.Container, product: ft.Card) -> None:
         """
         Aumenta en uno la cantidad de un producto en la lista de productos y lo muestra en el resumen de la comanda.
 
@@ -77,26 +94,26 @@ class ProductList:
         """
 
         # Se obtiene el nombre del producto a aumentar
-        product_to_add_one_name: str = product_to_add_one.content.content.controls[1].content.value
+        name, price = self._get_product_atributes(product)
 
         # Se recorre la lista de productos para encontrar el producto a aumentar
         for idx, product in enumerate(self._product_list):
             # Si el nombre del producto a aumentar es igual al nombre del producto a aumentar
-            if product.content.content.controls[1].content.value == product_to_add_one_name:
+            product_to_search: str = product.content.content.controls[1].content.value
+            if product_to_search == name:
                 # Se aumenta en uno la cantidad del producto en la lista del producto y la
                 # tarjeta del producto en la lista de productos
-                _quantity_ref_dict[product_to_add_one_name] += 1
-                product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[product_to_add_one_name]
+                _quantity_ref_dict[name] += 1
+                product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[name]
                 # Se actualiza el subtotal del producto
-                price: str = product_to_add_one.content.content.controls[3].content.key
-                subtotal: int = int(price) * _quantity_ref_dict[product_to_add_one_name]
+                subtotal: int = int(price) * _quantity_ref_dict[name]
                 product_list_content.content.controls[idx].content.content.controls[3].content.value = f"${subtotal}"
                 break
 
         page.update()
 
 
-    def remove_one(self, page: ft.Page, product_list_content: ft.Container, product_to_substarct) -> None:
+    def remove_one(self, page: ft.Page, product_list_content: ft.Container, product) -> None:
         """
         Reduce en uno la cantidad de un producto en la lista de productos y lo muestra en el resumen de la comanda.
 
@@ -110,36 +127,34 @@ class ProductList:
         """
 
         # Se obtiene el nombre del producto a reducir
-        product_to_remove_one_name: str = product_to_substarct.content.content.controls[1].content.value
+        name, price = self._get_product_atributes(product)
 
         # Se recorre la lista de productos para encontrar el producto a reducir
         for idx, product in enumerate(self._product_list):
             # Si el nombre del producto a reducir es igual al nombre del producto a reducir y su cantidad
             # en la lista de productos es mayor a 1
-            if (product.content.content.controls[1].content.value == product_to_remove_one_name 
-                and _quantity_ref_dict[product_to_remove_one_name] > 1):
+            product_to_search: str = product.content.content.controls[1].content.value
+            if product_to_search == name and _quantity_ref_dict[name] > 1:
                 # Se reduce en uno la cantidad del producto en la lista del producto y la
                 # tarjeta del producto en la lista de productos
-                _quantity_ref_dict[product_to_remove_one_name] -= 1
-                product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[product_to_remove_one_name]
+                _quantity_ref_dict[name] -= 1
+                product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[name]
                 # Se actualiza el subtotal del producto
-                price: str = product_to_substarct.content.content.controls[3].content.key
-                subtotal: int = int(price) * _quantity_ref_dict[product_to_remove_one_name]
+                subtotal: int = int(price) * _quantity_ref_dict[name]
                 product_list_content.content.controls[idx].content.content.controls[3].content.value = f"${subtotal}"
                 break
             # Si el nombre del producto a reducir es igual al nombre del producto a reducir y su cantidad
             # en la lista de productos es menor a 1
-            elif (product.content.content.controls[1].content.value == product_to_remove_one_name
-                and _quantity_ref_dict[product_to_remove_one_name] == 1):
+            elif product_to_search == name and _quantity_ref_dict[name] == 1:
                 self._product_list.pop(idx)
                 product_list_content.content.controls.pop(idx)
-                del _quantity_ref_dict[product_to_remove_one_name]
+                del _quantity_ref_dict[name]
                 break
 
         page.update()
 
 
-    def add_from_text_field(self, page: ft.Page, product_list_content: ft.Container, product_to_add: ft.Card) -> None:
+    def add_from_text_field(self, page: ft.Page, product_list_content: ft.Container, product: ft.Card) -> None:
         """
         Agrega la cantidad de un producto escrito en el cuadro de texto del contador en la tarjeta del producto.
 
@@ -153,27 +168,33 @@ class ProductList:
         """
 
         # Se obtiene el nombre del producto a actualizar su cantidad
-        product_to_add_name: str = product_to_add.content.content.controls[1].content.value
+        name, price = self._get_product_atributes(product)
 
         # Se recorre la lista de productos para encontrar el producto a actualizar su cantidad
         for idx, product in enumerate(self._product_list):
             # Si el nombre del producto a a actualizar es igual al nombre del producto a agregar
-            if product.content.content.controls[1].content.value == product_to_add_name:
+            product_to_search: str = product.content.content.controls[1].content.value
+            if product_to_search == name:
                 # Se actualiza la cantidad del producto en la lista del producto y la
                 # tarjeta del producto en la lista de productos
-                new_quantity: int = int(product_to_add.content.content.controls[2].content.controls[1].value)
-                _quantity_ref_dict[product_to_add_name] = new_quantity
-                product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[product_to_add_name]
-                # Se actualiza el subtotal del producto
-                price: str = product_to_add.content.content.controls[3].content.key
-                subtotal: int = int(price) * _quantity_ref_dict[product_to_add_name]
-                product_list_content.content.controls[idx].content.content.controls[3].content.value = f"${subtotal}"
-                break
+                try:
+                    new_quantity: int = int(product.content.content.controls[2].content.controls[1].value)
+                    if new_quantity < 1:
+                        self.delete(page, product_list_content, product)
+                        break
+                    _quantity_ref_dict[name] = new_quantity
+                    product_list_content.content.controls[idx].content.content.controls[2].content.controls[1].value = _quantity_ref_dict[name]
+                    # Se actualiza el subtotal del producto
+                    subtotal: int = int(price) * _quantity_ref_dict[name]
+                    product_list_content.content.controls[idx].content.content.controls[3].content.value = f"${subtotal}"
+                    break
+                except ValueError:
+                    continue
 
         page.update()
 
 
-    def delete(self, page: ft.Page, product_list_content: ft.Container, product_to_remove: ft.Card) -> None:
+    def delete(self, page: ft.Page, product_list_content: ft.Container, product: ft.Card) -> None:
         """
         Elimina un producto de la lista de productos y lo elimina del resumen de la comanda.
 
@@ -187,17 +208,18 @@ class ProductList:
         """
 
         # Se obtiene el nombre del producto a eliminar
-        product_to_remove_name: str = product_to_remove.content.content.controls[1].content.value
+        name, _= self._get_product_atributes(product)
 
         # Se recorre la lista de productos para encontrar el producto a eliminar
         for idx, product in enumerate(self._product_list):
             # Si el nombre del producto a eliminar es igual al nombre del producto a eliminar
-            if product.content.content.controls[1].content.value == product_to_remove_name:
+            product_to_search: str = product.content.content.controls[1].content.value
+            if product_to_search == name:
                 # Se elimina el producto de la lista de productos, de la referencia de cantidades
                 # y del resumen de la comanda
                 self._product_list.pop(idx)
                 product_list_content.content.controls.pop(idx)
-                del _quantity_ref_dict[product_to_remove_name]
+                del _quantity_ref_dict[name]
                 break
 
         page.update()
