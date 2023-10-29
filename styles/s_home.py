@@ -161,7 +161,7 @@ class SHome:
         )
 
         return self._cashier_button
-    
+
 
     def orders_button(self, page: ft.Page) -> ft.Card:
         """
