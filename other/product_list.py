@@ -11,7 +11,8 @@ class ProductList:
 
     def __init__(self) -> None:
         self._product_list: list[ft.Card] = []
-        self._quantity_ref_dict: dict = {}
+        self._quantity_ref_dict: dict[str, int] = {}
+        self._total: int = 0
 
 
     def _get_product_atributes(self, product: ft.Card) -> tuple[str, str]:
@@ -29,7 +30,28 @@ class ProductList:
         product_price: str = product.content.content.controls[3].content.key
 
         return product_name, product_price
-    
+
+
+    def _calculate_total(self) -> None:
+        """
+        Calcula el total de la comanda.
+
+        - Parámetros:
+            - No recibe parámetros.
+
+        - Regresa:
+            - No regresa ningún valor.
+        """
+
+        # Se calcula el total de la comanda sumando los subtotales de cada producto
+        # en el diccionario de referencia de cantidades
+        total = sum(
+            int(product.content.content.controls[3].content.value.replace("$", ""))
+            for product in self._product_list
+        )
+
+        self._total = total
+
 
     def _add_it(self, product_list_content: ft.Container, product: ft.Card, name: str, price: str) -> None:
         """
@@ -68,6 +90,9 @@ class ProductList:
         else:
             self._product_list.append(product)
             product_list_content.content.controls.append(product)
+
+        # Se actualiza el total de la comanda
+        self._calculate_total()
 
 
     def _add_it_from_text_field(self, product_list_content: ft.Container, product: ft.Card, name: str, price: str) -> None:
@@ -108,6 +133,9 @@ class ProductList:
             except ValueError:
                 pass
 
+        # Se actualiza el total de la comanda
+        self._calculate_total()
+
 
     def _reduce_quantity(self, product_list_content: ft.Container, name: str, price: str) -> None:
         """
@@ -142,6 +170,9 @@ class ProductList:
             elif self._quantity_ref_dict[name] == 1:
                 self._delete_it(product_list_content, name)
 
+        # Se actualiza el total de la comanda
+        self._calculate_total()
+
 
     def _delete_it(self, product_list_content: ft.Container, name: str) -> None:
         """
@@ -168,8 +199,11 @@ class ProductList:
             product_list_content.content.controls.pop(product_idx)
             del self._quantity_ref_dict[name]
 
+        # Se actualiza el total de la comanda
+        self._calculate_total()
 
-    def add_to_list(self, product_list_content: ft.Container, product: ft.Card) -> None:
+
+    def add_to_list(self, product_list_content: ft.Container, product: ft.Card, total: ft.Container) -> None:
         """
         Añade un producto a la lista de productos y lo muestra en el resumen de la comanda.
 
@@ -178,6 +212,7 @@ class ProductList:
         Parámetros:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos.
             - :param:`product_to_add` (ft.Card): Producto a agregar a la lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la comanda.
 
         Regresa:
             - No regresa ningún valor.
@@ -189,10 +224,14 @@ class ProductList:
         # Se llama al método auxiliar para agregar el producto a la lista de productos
         self._add_it(product_list_content, product, name, price)
 
+        # Se actualiza el total de la comanda
+        total.content.value = f"Total: ${self._total}"
+
         product_list_content.update()
+        total.update()
 
 
-    def add_from_text_field(self, product_list_content: ft.Container, product: ft.Card) -> None:
+    def add_from_text_field(self, product_list_content: ft.Container, product: ft.Card, total: ft.Container) -> None:
         """
         Agrega la cantidad de un producto escrito en el cuadro de texto del contador en la tarjeta del producto.
 
@@ -200,6 +239,7 @@ class ProductList:
             - :param:`page` (ft.Page): Página actual.
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos.
             - :param:`product_to_add` (ft.Card): Producto a agregar a la lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la comanda.
 
         - Regresa:
             - No regresa ningún valor.
@@ -211,16 +251,21 @@ class ProductList:
         # Se llama al método auxiliar para agregar la cantidad del producto
         self._add_it_from_text_field(product_list_content, product, name, price)
 
+        # Se actualiza el total de la comanda
+        total.content.value = f"Total: ${self._total}"
+
         product_list_content.update()
+        total.update()
 
 
-    def reduce_one(self, product_list_content: ft.Container, product) -> None:
+    def reduce_one(self, product_list_content: ft.Container, product: ft.Card, total: ft.Container) -> None:
         """
         Reduce en uno la cantidad de un producto en la lista de productos y lo muestra en el resumen de la comanda.
 
         - Parámetros:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos.
             - :param:`product_to_substarct` (ft.Card): Producto a reducir en la lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la comanda.
 
         - Regresa:
             - No regresa ningún valor.
@@ -232,16 +277,21 @@ class ProductList:
         # Se llama al método auxiliar para reducir en uno la cantidad del producto
         self._reduce_quantity(product_list_content, name, price)
 
+        # Se actualiza el total de la comanda
+        total.content.value = f"Total: ${self._total}"
+
         product_list_content.update()
+        total.update()
 
 
-    def delete(self, product_list_content: ft.Container, product: ft.Card) -> None:
+    def delete(self, product_list_content: ft.Container, product: ft.Card, total: ft.Container) -> None:
         """
         Elimina un producto de la lista de productos y lo elimina del resumen de la comanda.
 
         - Parámetros:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos.
             - :param:`product_to_remove` (ft.Card): Producto a eliminar de la lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la comanda.
 
         - Regresa:
             - No regresa ningún valor.
@@ -253,4 +303,24 @@ class ProductList:
         # Se llama al método auxiliar para eliminar el producto de la lista de productos
         self._delete_it(product_list_content, name)
 
+        # Se actualiza el total de la comanda
+        total.content.value = f"Total: ${self._total}"
+
         product_list_content.update()
+        total.update()
+
+
+    def clear(self) -> None:
+        """
+        Limpia la lista de productos y la referencia de cantidades.
+
+        - Parámetros:
+            - No recibe parámetros.
+
+        - Regresa:
+            - No regresa ningún valor.
+        """
+
+        self._product_list.clear()
+        self._quantity_ref_dict.clear()
+        self._total = 0

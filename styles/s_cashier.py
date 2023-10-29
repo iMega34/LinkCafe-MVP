@@ -21,18 +21,49 @@ for index, row in product_table.iterrows():
 # Styles del archivo styles.py
 styles: dict[str] = Styles.cashier_styles()
 
+# Nombre del cliente
+_customer_name: ft.TextField = ft.TextField(
+    label = "Nombre del cliente",
+    label_style = ft.TextStyle(
+        font_family = styles["title"]["font"],
+        color = styles["title"]["font_color"],
+    ),
+    text_style = ft.TextStyle(
+        font_family = styles["title"]["font_customer"],
+        size = styles["title"]["font_size_customer"],
+        color = styles["title"]["font_color"],
+    ),
+    border_color = styles["title"]["text_field_border_color"],
+    border_radius = styles["title"]["text_field_border_radius"],
+    text_align = ft.TextAlign.END,
+)
+
 # Lista de productos que se mostrarán en el resumen de la comanda
-_ticket_product_list: ProductList = ProductList()
+_product_list: ProductList = ProductList()
 
 # Contenedor de la lista de productos que se mostrarán en el resumen de la comanda
 # Se crea de manera global para poder acceder a él desde la clase ProductList
-product_list_content: ft.Container = ft.Container(
-    border = ft.border.all(1, "#FF0000"),
+_on_screen_product_list: ft.Container = ft.Container(
     width = styles["product_list"]["width"],
     height = styles["product_list"]["height"],
     content = ft.Column(
         alignment = ft.MainAxisAlignment.CENTER,
         scroll = True
+    )
+)
+
+# Total de la compra
+_total: ft.Container = ft.Container(
+    alignment = ft.alignment.center,
+    content = ft.Text(
+        f"Total: ${_product_list._total}",
+        width = styles["card"]["width"],
+        height = 60,
+        font_family = styles["total"]["font"],
+        size = styles["total"]["font_size"],
+        color = styles["total"]["font_color"],
+        weight = ft.FontWeight.W_300,
+        text_align = ft.TextAlign.CENTER
     )
 )
 
@@ -42,6 +73,85 @@ class SCashier:
     Propiedades de los controles utilizados por la función :function:`Cashier`
     del archivo :file:`cashier.py` para la creación de la página de caja.
     """
+
+    def _button_on_hover(self, _: ft.HoverEvent, button: ft.Container) -> None:
+        """
+        Permite al botón elevarse al pasar el cursor sobre él
+
+        Parámetros:
+            - _: ft.HoverEvent: Evento de pasar el cursor sobre el botón.
+            - button (ft.Container): Botón al que se le aplicará el efecto.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        if _.data == "true":
+            button.border = ft.border.all(3, "#F4FF2B")
+            button.update()
+
+        else:
+            button.border = ft.border.all(3, "#00000000")
+            button.update()
+
+
+    def _clear_order_summary(self) -> None:
+        """
+        Limpia la lista de productos, el total de la compra y el nombre del cliente
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        _product_list.clear()
+        _customer_name.value = ""
+        _customer_name.update()
+        _on_screen_product_list.content.controls.clear()
+        _on_screen_product_list.update()
+        _total.content.value = f"Total: ${_product_list._total}"
+        _total.update()
+
+
+    def _cancel_button_on_click(self, _: ft.ControlEvent) -> None:
+        """
+        Permite cancelar la comanda y regresa el botón a su estado original
+
+        Parámetros:
+            - _: ft.ControlEvent: Evento de hacer clic en el botón.
+        
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        print(f"Comanda\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
+
+        # Limpia la lista de productos, el total de la compra y el nombre del cliente
+        self._clear_order_summary()
+
+        print(f"Comanda cancelada\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
+
+
+    def _send_button_on_click(self, _: ft.ControlEvent) -> None:
+        """
+        Permite enviar la comanda al SCD y regresa el botón a su estado original
+
+        Parámetros:
+            - _: ft.ControlEvent: Evento de hacer clic en el botón.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        print(f"Comanda\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
+
+        # Limpia la lista de productos, el total de la compra y el nombre del cliente
+        self._clear_order_summary()
+
+        print(f"Comanda enviada\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
+
 
     def catalog() -> ft.Container:
         """
@@ -71,11 +181,11 @@ class SCashier:
                 try:
                     if _row_counter % 2 != 0:
                         product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                            True, product_list_content, _ticket_product_list
+                            True, _on_screen_product_list, _product_list, _total
                         )
                     else:
                         product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                            False, product_list_content, _ticket_product_list
+                            False, _on_screen_product_list, _product_list, _total
                         )
                     list_row.controls.append(product_card)
                     _counter += 1
@@ -118,25 +228,10 @@ class SCashier:
             text_align = ft.TextAlign.CENTER
         )
 
-        # Cuadro de texto para el nombre del cliente
-        _customer_name: ft.TextField = ft.TextField(
-            label = "Nombre del cliente",
-            label_style = ft.TextStyle(
-                font_family = styles["title"]["font"],
-                color = styles["title"]["font_color"],
-            ),
-            text_style = ft.TextStyle(
-                font_family = styles["title"]["font_customer"],
-                size = styles["title"]["font_size_customer"],
-                color = styles["title"]["font_color"],
-            ),
-            border_color = styles["title"]["text_field_border_color"],
-            border_radius = styles["title"]["text_field_border_radius"],
-        )
-
         # Se coloca el título y el cuadro de texto para el nombre del cliente dentro
         # de un objeto de la clase ft.Container
         title_content: ft.Container = ft.Container(
+            alignment = ft.alignment.center,
             content = ft.Row(
                 alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls = [
@@ -182,6 +277,7 @@ class SCashier:
         # Se colocan el subtítulo y el divisor dentro de un objeto de la
         # clase ft.Container
         subtitle_content: ft.Container = ft.Container(
+            alignment = ft.alignment.center,
             content = ft.Column(
                 controls = [
                     _divider,
@@ -192,6 +288,73 @@ class SCashier:
         )
 
         return subtitle_content
+
+
+    def _buttons(self) -> ft.Container:
+        """
+        Botones para cancelar la comanda o enviarla al Sistema Digital de Comandas (SCD).
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`buttons_content` (ft.Container): Botones para cancelar la comanda o enviarla al SCD.
+        """
+
+        # Botón para cancelar la comanda
+        _cancel_button: ft.Container = ft.Container(
+            width = styles["button"]["width"],
+            height = styles["button"]["height"],
+            bgcolor = styles["button"]["cancel_color"],
+            border_radius = ft.border_radius.all(styles["button"]["border_radius"]),
+            animate = ft.animation.Animation(250, ft.AnimationCurve.EASE_IN),
+            alignment = ft.alignment.center,
+            # Contenido del botón
+            content = ft.Text(
+                "Cancelar",
+                font_family = styles["button"]["font"],
+                size = styles["button"]["font_size"],
+                color = styles["button"]["font_color"],
+                weight = ft.FontWeight.W_300,
+                text_align = ft.TextAlign.CENTER
+            ),
+            on_hover = lambda _: self._button_on_hover(_, _cancel_button),
+            on_click = lambda _: self._cancel_button_on_click(_)
+        )
+
+        # Botón para enviar la comanda al Sistema Digital de Comandas (SCD)
+        _send_button: ft.Container = ft.Container(
+            width = styles["button"]["width"],
+            height = styles["button"]["height"],
+            bgcolor = styles["button"]["send_color"],
+            border_radius = ft.border_radius.all(styles["button"]["border_radius"]),
+            animate = ft.animation.Animation(250, ft.AnimationCurve.EASE_IN),
+            alignment = ft.alignment.center,
+            # Contenido del botón
+            content = ft.Text(
+                "Enviar",
+                font_family = styles["button"]["font"],
+                size = styles["button"]["font_size"],
+                color = styles["button"]["font_color"],
+                weight = ft.FontWeight.W_300,
+                text_align = ft.TextAlign.CENTER
+            ),
+            on_hover = lambda _: self._button_on_hover(_, _send_button),
+            on_click = lambda _: self._send_button_on_click(_)
+        )
+
+        # Se colocan los botones dentro de un objeto de la clase ft.Container
+        buttons_content: ft.Container = ft.Container(
+            content = ft.Row(
+                alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
+                controls = [
+                    _cancel_button,
+                    _send_button
+                ]
+            )
+        )
+
+        return buttons_content
 
 
     def order_summary() -> ft.Container:
@@ -213,10 +376,10 @@ class SCashier:
         _title: ft.Container = SCashier._title()
         # Subtítulo del cuadro de resumen
         _subtitle: ft.Container = SCashier._subtitle()
-        # Lista con el resumen de la comanda
+        # Botones para cancelar la comanda o enviarla al SCD
+        _buttons: ft.Container = SCashier()._buttons()
 
         order_summary_content: ft.Container = ft.Container(
-            border = ft.border.all(1, "#FF0000"),
             width = styles["card"]["width"],
             height = styles["card"]["height"],
             padding = styles["card"]["padding"],
@@ -230,7 +393,11 @@ class SCashier:
                     # Subtítulo del cuadro de resumen
                     _subtitle,
                     # Lista con el resumen de la comanda (variable global)
-                    product_list_content,
+                    _on_screen_product_list,
+                    # Total de la compra
+                    _total,
+                    # Botones para cancelar la comanda o enviarla al SCD
+                    _buttons
                 ]
             )
         )

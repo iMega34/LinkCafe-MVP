@@ -15,7 +15,7 @@ class Router:
         self.page = page
         self.routes = {
             "/": Home(page),                        # Página de inicio
-            "/cashier": Cashier(),                  # Página de caja
+            "/cashier": Cashier(page),              # Página de caja
             "/orders": Orders(page),                # Página de órdenes
             # "/digital_menu": DigitalMenu(page),     # Página de menú digital
         }

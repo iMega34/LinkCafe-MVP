@@ -156,9 +156,30 @@ class Styles:
                 "font_color" : "#FFFFFF",
                 "divider_color" : "#2F374C"
             },
+            "total" : {
+                "font" : "Arbutus Slab",
+                "font_size" : 35,
+                "font_color" : "#FFFFFF"
+            },
+            "button" : {
+                "width" : 300,
+                "height" : 65,
+                "border_radius" : 50,
+                "font_size" : 35,
+                "font" : "Arbutus Slab",
+                "font_color" : "#FFFFFF",
+                "cancel_color" : "#FF3131",
+                "send_color" : "#00BF63",
+                "hover_color" : "#1F2129",
+                "tint_color" : "#404040",
+                "shadow_color" : "#656565"
+            },
             "product_list" : {
                 "width" : 650,
                 "height" : 365,
+                "border_radius" : 25,
+                "color" : "#292830",
+                "border_color" : "#404040",
             },
         }
 

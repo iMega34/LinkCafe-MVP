@@ -4,7 +4,7 @@ import flet as ft
 from styles.s_cashier import SCashier
 
 
-def Cashier() -> ft.Column:
+def Cashier(page: ft.Page) -> ft.Column:
     """
     Página de la caja.
 

@@ -68,23 +68,24 @@ class ProductCard:
             self._ticket_card.content.update()
 
 
-    def _add_to_cart(self, _: ft.ControlEvent, product_list_content: ft.Container, product_list: ProductList) -> None:
+    def _add_to_cart(self, _: ft.ControlEvent, product_list_content: ft.Container, product_list: ProductList, total: ft.Container) -> None:
         """
         Agrega un producto al carrito de compras
 
         Parámetros de acarreo:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos añadidos.
             - :param:`product_list` (ProductList): Lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la compra.
 
         Regresa:
             - No regresa ningún valor.
         """
 
-        product_to_add: ft.Card = self.build_ticket_card(product_list_content, product_list)
-        product_list.add_to_list(product_list_content, product_to_add)
+        product_to_add: ft.Card = self.build_ticket_card(product_list_content, product_list, total)
+        product_list.add_to_list(product_list_content, product_to_add, total)
 
 
-    def build_card(self, odd_row: bool, product_list_content: ft.Container , product_list: ProductList) -> ft.Card:
+    def build_card(self, odd_row: bool, product_list_content: ft.Container , product_list: ProductList, total: ft.Container) -> ft.Card:
         """
         Construye una tarjeta de producto a partir de un objeto de la clase :class:`Product`.
 
@@ -95,6 +96,8 @@ class ProductCard:
 
         Parámetros de acarreo:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos añadidos.
+            - :param:`product_list` (ProductList): Lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la compra.
 
         Regresa:
             - :return:`card` (ft.Card): Tarjeta de producto construida.
@@ -183,7 +186,7 @@ class ProductCard:
                 ]
             ),
             on_hover = lambda _: self._card_on_hover(_),
-            on_click = lambda _: self._add_to_cart(_, product_list_content, product_list),
+            on_click = lambda _: self._add_to_cart(_, product_list_content, product_list, total),
         )
 
         # Se coloca el contenido de la tarjeta dentro de un objeto de la clase ft.Card
@@ -199,7 +202,7 @@ class ProductCard:
         return self._card
 
 
-    def build_ticket_card(self, product_list_content: ft.Container, product_list: ProductList) -> ft.Card:
+    def build_ticket_card(self, product_list_content: ft.Container, product_list: ProductList, total: ft.Container) -> ft.Card:
         """
         Construye una tarjeta de producto a partir de un objeto de la clase :class:`Product`.
 
@@ -207,8 +210,9 @@ class ProductCard:
         y la cantidad del producto en la lista, así como un botón para eliminar el producto de la lista.
 
         Parámetros:
-            - product_list_content (ft.Container): Contenedor de la lista de productos añadidos.
-            - product_list (ProductList): Lista de productos.
+            - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos añadidos.
+            - :param:`product_list` (ProductList): Lista de productos.
+            - :param:`total` (ft.Container): Contenedor del total de la compra.
 
         Regresa:
             - :return:`simple_card` (ft.Card): Tarjeta de producto simplificada construida.
@@ -247,14 +251,14 @@ class ProductCard:
         _remove_one_button: ft.IconButton = ft.IconButton(
             icon = ft.icons.REMOVE,
             icon_color = styles["ticket_card"]["button_color"],
-            on_click = lambda _: product_list.reduce_one(product_list_content, self._ticket_card)
+            on_click = lambda _: product_list.reduce_one(product_list_content, self._ticket_card, total)
         )
 
         # Botón para sumar en uno la cantidad del producto en la lista
         _add_one_button: ft.IconButton = ft.IconButton(
             icon = ft.icons.ADD,
             icon_color = styles["ticket_card"]["button_color"],
-            on_click = lambda _: product_list.add_to_list(product_list_content, self._ticket_card)
+            on_click = lambda _: product_list.add_to_list(product_list_content, self._ticket_card, total)
         )
 
         # Cuadro de texto para mostrar la cantidad del producto en la lista
@@ -270,7 +274,7 @@ class ProductCard:
             bgcolor = styles["ticket_card"]["text_field_bgcolor"],
             border_color = styles["ticket_card"]["text_field_border_color"],
             border_radius = styles["ticket_card"]["text_field_border_radius"],
-            on_change = lambda _: product_list.add_from_text_field(product_list_content, self._ticket_card)
+            on_change = lambda _: product_list.add_from_text_field(product_list_content, self._ticket_card, total)
         )
 
         # Se coloca el contador de productos dentro de un objeto de la clase ft.Container
@@ -291,7 +295,7 @@ class ProductCard:
             icon = ft.icons.CLOSE_ROUNDED,
             icon_color = styles["ticket_card"]["remove_button_color"],
             icon_size = styles["ticket_card"]["remove_button_size"],
-            on_click = lambda _: product_list.delete(product_list_content, self._ticket_card)
+            on_click = lambda _: product_list.delete(product_list_content, self._ticket_card, total)
         )
 
         # Se coloca el nombre, el precio, el contador de productos y el botón para eliminar
