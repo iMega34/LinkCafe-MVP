@@ -43,13 +43,12 @@ class SCashier:
     del archivo :file:`cashier.py` para la creación de la página de caja.
     """
 
-
-    def catalog(page: ft.Page) -> ft.Container:
+    def catalog() -> ft.Container:
         """
         Catálogo de productos.
 
         Parámetros:
-            - :param:`page` (ft.Page): Página actual.
+            - No recibe parámetros.
 
         Regresa:
             - :return:`catalog_content` (ft.Container): Catálogo de productos.
@@ -72,11 +71,11 @@ class SCashier:
                 try:
                     if _row_counter % 2 != 0:
                         product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                            True, page, product_list_content, _ticket_product_list
+                            True, product_list_content, _ticket_product_list
                         )
                     else:
                         product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                            False, page, product_list_content, _ticket_product_list
+                            False, product_list_content, _ticket_product_list
                         )
                     list_row.controls.append(product_card)
                     _counter += 1

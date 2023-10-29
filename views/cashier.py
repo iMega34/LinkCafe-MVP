@@ -4,7 +4,7 @@ import flet as ft
 from styles.s_cashier import SCashier
 
 
-def Cashier(page: ft.Page) -> ft.Column:
+def Cashier() -> ft.Column:
     """
     Página de la caja.
 
@@ -22,7 +22,7 @@ def Cashier(page: ft.Page) -> ft.Column:
     # Resumen de la comanda
     order_summary: ft.Container = SCashier.order_summary()
     # Catálogo de productos
-    catalog: ft.Container = SCashier.catalog(page)
+    catalog: ft.Container = SCashier.catalog()
 
     # Propiedades de la página de caja
     view: ft.Column = ft.Column(
