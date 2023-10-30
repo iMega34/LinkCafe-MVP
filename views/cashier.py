@@ -24,7 +24,7 @@ def Cashier(page: ft.Page) -> ft.Column:
     # Título de catálogo de productos
     catalog_title: ft.Container = SCashier.catalog_title()
     # Barra de búsqueda
-    search_bar: ft.Container = SCashier.search_bar()
+    search_bar: ft.Container = SCashier().search_bar()
     # Catálogo de productos
     catalog: ft.Container = SCashier.catalog()
     # Selector de tipo de cliente

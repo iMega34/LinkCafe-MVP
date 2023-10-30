@@ -67,6 +67,13 @@ _total: ft.Container = ft.Container(
     )
 )
 
+# Objeto de la clase ft.ListView para contener los productos del catálogo
+list_view: ft.ListView = ft.ListView(
+    spacing = styles["catalog"]["spacing"],
+    width = styles["catalog"]["width_list"],
+    height = styles["catalog"]["height"],
+)
+
 
 class SCashier:
     """
@@ -79,8 +86,8 @@ class SCashier:
         Permite al botón elevarse al pasar el cursor sobre él
 
         Parámetros:
-            - _: ft.HoverEvent: Evento de pasar el cursor sobre el botón.
-            - button (ft.Container): Botón al que se le aplicará el efecto.
+            - :param:`_` (ft.HoverEvent): Evento de pasar el cursor sobre el botón.
+            - :param:`button` (ft.Container): Botón al que se le aplica el evento.
 
         Regresa:
             - No regresa ningún valor.
@@ -93,6 +100,58 @@ class SCashier:
         else:
             button.border = ft.border.all(3, "#00000000")
             button.update()
+
+
+    def _show_products(self, _: ft.ControlEvent, query: str) -> None:
+        """
+        Muestra los productos en el catálogo de productos
+
+        Si se ingresa texto en la barra de búsqueda, se muestran los productos que
+        coincidan con el texto ingresado, si no se ingresa texto en la barra de búsqueda
+        se muestran todos los productos.
+
+        Parámetros:
+            - :param:`_` (ft.ControlEvent): Evento de cambio en el texto de la barra de búsqueda.
+            - :param:`query` (str): Texto ingresado en la barra de búsqueda.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        # Se limpia la lista de productos
+        list_view.controls.clear()
+
+        _counter: int = 0
+        _row_counter: int = 0
+
+        # Se recorre la lista de productos y se agregan a la lista de productos
+        for row in range(len(products)):
+            list_row = ft.Row(spacing = 1)
+            # Se agregan 4 productos por fila
+            for product in range(4):
+                try:
+                    # Se alterna el color de fondo de las filas
+                    is_odd_row: bool = _row_counter % 2 != 0
+                    # Se crea la tarjeta del producto
+                    product_card: ft.Card = ProductCard(products[_counter]).build_card(
+                        is_odd_row, _on_screen_product_list, _product_list, _total
+                    )
+                    # Se agregan los productos a la lista de productos solo si coinciden
+                    # con el texto ingresado
+                    if query.capitalize() in products[_counter].name:
+                        list_row.controls.append(product_card)
+                    _counter += 1
+
+                # Si se llega al final de la lista de productos, se termina el ciclo
+                except IndexError:
+                    break
+
+            # Se agregan las filas a la lista de productos
+            list_view.controls.append(list_row)
+            _row_counter += 1
+
+        # Se actualiza la lista de productos
+        list_view.update()
 
 
     def _clear_order_summary(self) -> None:
@@ -120,8 +179,8 @@ class SCashier:
         Permite cancelar la comanda y regresa el botón a su estado original
 
         Parámetros:
-            - _: ft.ControlEvent: Evento de hacer clic en el botón.
-        
+            - :param:`_` (ft.ControlEvent): Evento de hacer clic en el botón.
+
         Regresa:
             - No regresa ningún valor.
         """
@@ -135,7 +194,7 @@ class SCashier:
         Permite enviar la comanda al SCD y regresa el botón a su estado original
 
         Parámetros:
-            - _: ft.ControlEvent: Evento de hacer clic en el botón.
+            - :param:`_` (ft.ControlEvent): Evento de hacer clic en el botón.
 
         Regresa:
             - No regresa ningún valor.
@@ -172,7 +231,7 @@ class SCashier:
         return catalog_title_content
 
 
-    def search_bar() -> ft.Container:
+    def search_bar(self) -> ft.Container:
         """
         Barra de búsqueda de productos.
 
@@ -202,6 +261,8 @@ class SCashier:
                 border_color = styles["search_bar"]["border_color"],
                 border_radius = styles["search_bar"]["border_radius"],
                 text_align = ft.TextAlign.START,
+                # Busca los productos que coincidan con el texto ingresado
+                on_change = lambda _: self._show_products(_, search_bar_content.content.value)
             )
         )
 
@@ -222,37 +283,32 @@ class SCashier:
         _counter: int = 0
         _row_counter: int = 0
 
-        # Se crea un objeto de la clase ft.ListView para contener los productos del catálogo
-        list_view: ft.ListView = ft.ListView(
-            spacing = styles["catalog"]["spacing"],
-            width = styles["catalog"]["width_list"],
-            height = styles["catalog"]["height"],
-        )
-
-        # Se crean objetos de la clase ft.Row para contener los productos del catálogo en grupos de 4
+        # Se recorre la lista de productos y se agregan a la lista de productos
         for row in range(len(products)):
-            list_row: ft.Row = ft.Row(spacing = 1)
+            list_row = ft.Row(spacing = 1)
+            # Se agregan 4 productos por fila
             for product in range(4):
                 try:
-                    if _row_counter % 2 != 0:
-                        product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                            True, _on_screen_product_list, _product_list, _total
-                        )
-                    else:
-                        product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                            False, _on_screen_product_list, _product_list, _total
-                        )
+                    # Se alterna el color de fondo de las filas
+                    is_odd_row: bool = _row_counter % 2 != 0
+                    # Se crea la tarjeta del producto
+                    product_card: ft.Card = ProductCard(products[_counter]).build_card(
+                        is_odd_row, _on_screen_product_list, _product_list, _total
+                    )
+                    # Se agregan los productos a la lista de productos y aumenta el contador
                     list_row.controls.append(product_card)
                     _counter += 1
 
+                # Si se llega al final de la lista de productos, se termina el ciclo
                 except IndexError:
                     break
 
+            # Se agregan las filas a la lista de productos
             list_view.controls.append(list_row)
             _row_counter += 1
 
-        # Se coloca el objeto list_view dentro de un objeto de la clase ft.Container
-        catalog_content: ft.Container = ft.Container(
+        # Se coloca la lista de productos dentro de un objeto de la clase ft.Container
+        catalog_content = ft.Container(
             width = styles["catalog"]["width_container"],
             alignment = ft.alignment.center,
             content = list_view,
