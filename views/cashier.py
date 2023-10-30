@@ -21,8 +21,14 @@ def Cashier(page: ft.Page) -> ft.Column:
 
     # Resumen de la comanda
     order_summary: ft.Container = SCashier.order_summary()
+    # Título de catálogo de productos
+    catalog_title: ft.Container = SCashier.catalog_title()
+    # Barra de búsqueda
+    search_bar: ft.Container = SCashier.search_bar()
     # Catálogo de productos
     catalog: ft.Container = SCashier.catalog()
+    # Selector de tipo de cliente
+    customer_type: ft.Container = SCashier.customer_type_selector()
 
     # Propiedades de la página de caja
     view: ft.Column = ft.Column(
@@ -40,8 +46,12 @@ def Cashier(page: ft.Page) -> ft.Column:
                         # Catálogo de productos
                         ft.Column(
                             alignment = ft.MainAxisAlignment.CENTER,
+                            spacing = 15,
                             controls = [
-                                catalog
+                                catalog_title,
+                                search_bar,
+                                catalog,
+                                customer_type
                             ]
                         ),
                         # Resumen de la comanda

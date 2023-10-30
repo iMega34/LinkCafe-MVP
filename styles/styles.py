@@ -130,7 +130,7 @@ class Styles:
             "catalog" : {
                 "width_container" : 840,
                 "width_list" : 835,
-                "height" : 560,
+                "height" : 420,
                 "spacing" : 1
             },
             "card" : {
@@ -149,6 +149,27 @@ class Styles:
                 "font_color" : "#FFFFFF",
                 "text_field_border_color" : "#404040",
                 "text_field_border_radius" : 25
+            },
+            "search_bar" : {
+                "width" : 840,
+                "border_radius" : 25,
+                "bgcolor" : "#1C1E24",
+                "font" : "Arbutus Slab",
+                "font_size" : 35,
+                "hint_size" : 25,
+                "font_color" : "#FFFFFF",
+                "border_color" : "#404040",
+            },
+            "customer_type" : {
+                "width" : 840,
+                "height" : 100,
+                "bgcolor" : "#1C1E24",
+                "font" : "Arbutus Slab",
+                "font_color" : "#FFFFFF",
+                "font_size" : 25,
+                "label_size" : 20,
+                "border_radius" : 15,
+                "border_color" : "#404040",
             },
             "subtitle" : {
                 "font" : "Arbutus Slab",

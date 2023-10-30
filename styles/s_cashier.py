@@ -35,7 +35,7 @@ _customer_name: ft.TextField = ft.TextField(
     ),
     border_color = styles["title"]["text_field_border_color"],
     border_radius = styles["title"]["text_field_border_radius"],
-    text_align = ft.TextAlign.END,
+    text_align = ft.TextAlign.START,
 )
 
 # Lista de productos que se mostrarán en el resumen de la comanda
@@ -126,12 +126,8 @@ class SCashier:
             - No regresa ningún valor.
         """
 
-        print(f"Comanda\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
-
         # Limpia la lista de productos, el total de la compra y el nombre del cliente
         self._clear_order_summary()
-
-        print(f"Comanda cancelada\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
 
 
     def _send_button_on_click(self, _: ft.ControlEvent) -> None:
@@ -145,12 +141,71 @@ class SCashier:
             - No regresa ningún valor.
         """
 
-        print(f"Comanda\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
-
         # Limpia la lista de productos, el total de la compra y el nombre del cliente
         self._clear_order_summary()
 
-        print(f"Comanda enviada\t{_customer_name.value}\t{_product_list._quantity_ref_dict}")
+
+    def catalog_title() -> ft.Container:
+        """
+        Título del catálogo de productos.
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`catalog_title_content` (ft.Container): Título del catálogo de productos.
+        """
+
+        catalog_title_content: ft.Container = ft.Container(
+            alignment = ft.alignment.center,
+            content = ft.Text(
+                "Catálogo",
+                width = styles["catalog"]["width_container"],
+                font_family = styles["title"]["font"],
+                size = styles["title"]["font_size_title"],
+                color = styles["title"]["font_color"],
+                weight = ft.FontWeight.W_300,
+                text_align = ft.TextAlign.CENTER
+            )
+        )
+
+        return catalog_title_content
+
+
+    def search_bar() -> ft.Container:
+        """
+        Barra de búsqueda de productos.
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`search_bar_content` (ft.Container): Barra de búsqueda de productos.
+        """
+
+        search_bar_content: ft.Container = ft.Container(
+            width = styles["search_bar"]["width"],
+            alignment = ft.alignment.center,
+            content = ft.TextField(
+                label = "Barra de busqueda",
+                label_style = ft.TextStyle(
+                    font_family = styles["search_bar"]["font"],
+                    size = styles["search_bar"]["hint_size"],
+                    color = styles["search_bar"]["font_color"],
+                ),
+                text_style = ft.TextStyle(
+                    font_family = styles["search_bar"]["font"],
+                    size = styles["search_bar"]["font_size"],
+                    color = styles["search_bar"]["font_color"],
+                ),
+                bgcolor = styles["search_bar"]["bgcolor"],
+                border_color = styles["search_bar"]["border_color"],
+                border_radius = styles["search_bar"]["border_radius"],
+                text_align = ft.TextAlign.START,
+            )
+        )
+
+        return search_bar_content
 
 
     def catalog() -> ft.Container:
@@ -201,10 +256,57 @@ class SCashier:
             width = styles["catalog"]["width_container"],
             alignment = ft.alignment.center,
             content = list_view,
-            border = ft.border.all(1, "#FF0000"),
         )
 
         return catalog_content
+
+
+    def customer_type_selector() -> ft.Container:
+        """
+        Selector de tipo de cliente.
+
+        Modifica el precio de los productos dependiendo del tipo de cliente.
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - :return:`selector_content` (ft.Container): Selector de empleado o socio.
+        """
+
+        _dropdown: ft.Dropdown = ft.Dropdown(
+            value = "Cliente",
+            label = "Tipo de cliente",
+            label_style = ft.TextStyle(
+                font_family = styles["customer_type"]["font"],
+                size = styles["customer_type"]["label_size"],
+                color = styles["customer_type"]["font_color"],
+            ),
+            text_style = ft.TextStyle(
+                font_family = styles["customer_type"]["font"],
+                size = styles["customer_type"]["font_size"],
+                color = styles["customer_type"]["font_color"],
+            ),
+            options = [
+                ft.dropdown.Option("Cliente"),
+                ft.dropdown.Option("Empleado"),
+                ft.dropdown.Option("Socio")
+            ],
+            border_radius = styles["customer_type"]["border_radius"],
+            bgcolor = styles["customer_type"]["bgcolor"],
+            border_color = styles["customer_type"]["border_color"],
+            focused_bgcolor = styles["customer_type"]["bgcolor"],
+            focused_border_color = styles["customer_type"]["border_color"],
+        )
+
+        selector_content: ft.Container = ft.Container(
+            width = styles["customer_type"]["width"],
+            height = styles["customer_type"]["height"],
+            alignment = ft.alignment.center,
+            content = _dropdown
+        )
+
+        return selector_content
 
 
     def _title() -> ft.Container:
