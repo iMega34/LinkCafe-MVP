@@ -9,12 +9,15 @@ class Product:
         - id: Identificador del producto
         - name: Nombre del producto
         - price: Precio del producto
+        - employee_price: Precio de empleado del producto
+        - partner_price: Precio de socio del producto
         - quantity: Cantidad de productos disponibles
         - image: Dirección de la imagen del producto en assets/images
         - additional_info: Información adicional del producto como alérgenos, etc.
     """
 
-    def __init__(self, id: int, name: str, price: int, quantity: int, image: str, additional_info: str) -> None:
+    def __init__(self, id: int, name: str, price: int, employee_price: int,
+                 partner_price: int, quantity: int, image: str, additional_info: str) -> None:
         """
         Construye un objeto Producto con la información proporcionada.
 
@@ -22,6 +25,8 @@ class Product:
             - :param:`id` (int): Identificador del producto
             - :param:`name` (str): Nombre del producto
             - :param:`price` (int): Precio del producto
+            - :param:`employee_price` (int): Precio de empleado del producto
+            - :param:`partner_price` (int): Precio de socio del producto
             - :param:`quantity` (int): Cantidad de productos disponibles
             - :param:`image` (str): Dirección de la imagen del producto en assets/images
             - :param:`additional_info` (str): Información adicional del producto como alérgenos, etc.
@@ -30,6 +35,8 @@ class Product:
         self.id: int = id
         self.name: str = name
         self.price: int = price
+        self.employee_price: int = employee_price
+        self.partner_price: int = partner_price
         self.quantity: int = quantity
         self.image: str = image
         self.additional_info: str = additional_info

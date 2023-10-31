@@ -68,7 +68,7 @@ class ProductCard:
             self._ticket_card.content.update()
 
 
-    def _add_to_cart(self, _: ft.ControlEvent, product_list_content: ft.Container, product_list: ProductList, total: ft.Container) -> None:
+    def _add_to_cart(self, _: ft.ControlEvent, product_list_content: ft.Container, product_list: ProductList, total: ft.Container, customer_type: str) -> None:
         """
         Agrega un producto al carrito de compras
 
@@ -76,16 +76,17 @@ class ProductCard:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos añadidos.
             - :param:`product_list` (ProductList): Lista de productos.
             - :param:`total` (ft.Container): Contenedor del total de la compra.
+            - :param:`customer_type` (str): Tipo de cliente.
 
         Regresa:
             - No regresa ningún valor.
         """
 
-        product_to_add: ft.Card = self.build_ticket_card(product_list_content, product_list, total)
+        product_to_add: ft.Card = self.build_ticket_card(product_list_content, product_list, total, customer_type)
         product_list.add_to_list(product_list_content, product_to_add, total)
 
 
-    def build_card(self, odd_row: bool, product_list_content: ft.Container , product_list: ProductList, total: ft.Container) -> ft.Card:
+    def build_card(self, odd_row: bool, product_list_content: ft.Container , product_list: ProductList, total: ft.Container, customer_type: str) -> ft.Card:
         """
         Construye una tarjeta de producto a partir de un objeto de la clase :class:`Product`.
 
@@ -98,6 +99,7 @@ class ProductCard:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos añadidos.
             - :param:`product_list` (ProductList): Lista de productos.
             - :param:`total` (ft.Container): Contenedor del total de la compra.
+            - :param:`customer_type` (str): Tipo de cliente.
 
         Regresa:
             - :return:`card` (ft.Card): Tarjeta de producto construida.
@@ -110,6 +112,15 @@ class ProductCard:
         else:
             styles["card"]["bgcolor_1"] = "#2F374C"
             styles["card"]["bgcolor_2"] = "#4F5467"
+
+        price_str: str = ""
+
+        if customer_type == r"Empleado - 15% descuento":
+            price_str = self._product.employee_price
+        elif customer_type == r"Socio - 30% descuento":
+            price_str = self._product.partner_price
+        else:
+            price_str = self._product.price
 
         # Nombre del producto
         name: ft.Container = ft.Container(
@@ -131,8 +142,8 @@ class ProductCard:
             height = styles["price"]["height"],
             alignment = ft.alignment.center,
             content = ft.Text(
-                f"${self._product.price}",
-                key = self._product.price,
+                f"${price_str}",
+                key = price_str,
                 font_family = styles["price"]["font"],
                 size = styles["price"]["font_size"],
                 color = styles["price"]["font_color"],
@@ -186,7 +197,7 @@ class ProductCard:
                 ]
             ),
             on_hover = lambda _: self._card_on_hover(_),
-            on_click = lambda _: self._add_to_cart(_, product_list_content, product_list, total),
+            on_click = lambda _: self._add_to_cart(_, product_list_content, product_list, total, customer_type),
         )
 
         # Se coloca el contenido de la tarjeta dentro de un objeto de la clase ft.Card
@@ -202,7 +213,7 @@ class ProductCard:
         return self._card
 
 
-    def build_ticket_card(self, product_list_content: ft.Container, product_list: ProductList, total: ft.Container) -> ft.Card:
+    def build_ticket_card(self, product_list_content: ft.Container, product_list: ProductList, total: ft.Container, customer_type: str) -> ft.Card:
         """
         Construye una tarjeta de producto a partir de un objeto de la clase :class:`Product`.
 
@@ -213,10 +224,18 @@ class ProductCard:
             - :param:`product_list_content` (ft.Container): Contenedor de la lista de productos añadidos.
             - :param:`product_list` (ProductList): Lista de productos.
             - :param:`total` (ft.Container): Contenedor del total de la compra.
+            - :param:`customer_type` (str): Tipo de cliente.
 
         Regresa:
             - :return:`simple_card` (ft.Card): Tarjeta de producto simplificada construida.
         """
+
+        if customer_type == r"Empleado - 15% descuento":
+            price_str = self._product.employee_price
+        elif customer_type == r"Socio - 30% descuento":
+            price_str = self._product.partner_price
+        else:
+            price_str = self._product.price
 
         # Nombre del producto
         name: ft.Container = ft.Container(
@@ -238,8 +257,8 @@ class ProductCard:
             width = styles["ticket_card"]["price_width"],
             alignment = ft.alignment.center,
             content = ft.Text(
-                f"${self._product.price}",
-                key = self._product.price,
+                f"${price_str}",
+                key = price_str,
                 font_family = styles["ticket_card"]["font"],
                 size = styles["ticket_card"]["font_size"],
                 color = styles["ticket_card"]["font_color"],

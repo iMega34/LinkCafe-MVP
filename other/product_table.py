@@ -11,9 +11,11 @@ class ProductTable:
         - Columna A: ID del producto
         - Columna B: Nombre del producto
         - Columna C: Precio del producto
-        - Columna D: Cantidad de productos disponibles
-        - Columna E: Dirección de la imagen del producto en assets/images
-        - Columna F: Información adicional del producto como alérgenos, etc.
+        - Columna D: Precio de empleado del producto
+        - Columna E: Precio de socio del producto
+        - Columna F: Cantidad de productos en existencia
+        - Columna G: Dirección de la imagen del producto
+        - Columna H: Información adicional del producto
 
     El archivo de Excel debe tener el nombre :file:`catalogo.xlsm` y debe estar en la raíz del proyecto.
 

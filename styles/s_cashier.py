@@ -13,7 +13,16 @@ product_table: ProductTable = ProductTable("catalogo.xlsm").get_table()
 products: list[Product] = []
 
 for index, row in product_table.iterrows():
-    product: Product = Product(index, row["Nombre"], row["Precio"], row["Cantidad"], row["Imagen"], row["Información adicional"])
+    product: Product = Product(
+        index,
+        row["Nombre"],
+        row["Precio"],
+        row["Precio empleado"],
+        row["Precio socio"],
+        row["Cantidad"],
+        row["Imagen"],
+        row["Información adicional"]
+    )
     products.append(product)
 
 
@@ -72,6 +81,7 @@ list_view: ft.ListView = ft.ListView(
     spacing = styles["catalog"]["spacing"],
     width = styles["catalog"]["width_list"],
     height = styles["catalog"]["height"],
+    key = "Cliente"
 )
 
 
@@ -100,6 +110,45 @@ class SCashier:
         else:
             button.border = ft.border.all(3, "#00000000")
             button.update()
+
+
+    def _build_catalog(self) -> None:
+        """
+        Construye el catálogo de productos
+
+        Parámetros:
+            - No recibe parámetros.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        _counter: int = 0
+        _row_counter: int = 0
+
+        # Se recorre la lista de productos y se agregan a la lista de productos
+        for row in range(len(products)):
+            list_row = ft.Row(spacing = 1)
+            # Se agregan 4 productos por fila
+            for product in range(4):
+                try:
+                    # Se alterna el color de fondo de las filas
+                    is_odd_row: bool = _row_counter % 2 != 0
+                    # Se crea la tarjeta del producto
+                    product_card: ft.Card = ProductCard(products[_counter]).build_card(
+                        is_odd_row, _on_screen_product_list, _product_list, _total, list_view.key
+                    )
+                    # Se agregan los productos a la lista de productos y aumenta el contador
+                    list_row.controls.append(product_card)
+                    _counter += 1
+
+                # Si se llega al final de la lista de productos, se termina el ciclo
+                except IndexError:
+                    break
+
+            # Se agregan las filas a la lista de productos
+            list_view.controls.append(list_row)
+            _row_counter += 1
 
 
     def _show_products(self, _: ft.ControlEvent, query: str) -> None:
@@ -134,7 +183,7 @@ class SCashier:
                     is_odd_row: bool = _row_counter % 2 != 0
                     # Se crea la tarjeta del producto
                     product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                        is_odd_row, _on_screen_product_list, _product_list, _total
+                        is_odd_row, _on_screen_product_list, _product_list, _total, list_view.key
                     )
                     # Se agregan los productos a la lista de productos solo si coinciden
                     # con el texto ingresado
@@ -149,6 +198,30 @@ class SCashier:
             # Se agregan las filas a la lista de productos
             list_view.controls.append(list_row)
             _row_counter += 1
+
+        # Se actualiza la lista de productos
+        list_view.update()
+
+
+    def _apply_customer_type_discount(self, _: ft.ControlEvent, customer_type: str) -> None:
+        """
+        Aplica el descuento correspondiente al tipo de cliente y actualiza el catálogo de productos
+
+        Parámetros:
+            - :param:`_` (ft.ControlEvent): Evento de cambio en el tipo de cliente.
+            - :param:`customer_type` (str): Tipo de cliente.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        # Se limpia la lista de productos y se actualiza el tipo de cliente
+        list_view.controls.clear()
+        list_view.key = customer_type
+
+        # Se aplica el descuento correspondiente al tipo de cliente y 
+        # se muestran los nuevos precios
+        self._build_catalog()
 
         # Se actualiza la lista de productos
         list_view.update()
@@ -189,19 +262,111 @@ class SCashier:
         self._clear_order_summary()
 
 
-    def _send_button_on_click(self, _: ft.ControlEvent) -> None:
+    def _open_alert(self, page: ft.Page, alert: ft.AlertDialog) -> None:
         """
-        Permite enviar la comanda al SCD y regresa el botón a su estado original
+        Abre el cuadro de alerta
 
         Parámetros:
-            - :param:`_` (ft.ControlEvent): Evento de hacer clic en el botón.
+            - :param:`page` (ft.Page): Página actual.
+            - :param:`alert` (ft.AlertDialog): Cuadro de alerta.
 
         Regresa:
             - No regresa ningún valor.
         """
 
-        # Limpia la lista de productos, el total de la compra y el nombre del cliente
-        self._clear_order_summary()
+        page.dialog = alert
+        alert.open = True
+        page.update()
+
+
+    def _close_alert(self, _: ft.ControlEvent, page: ft.Page, alert: ft.AlertDialog) -> None:
+        """
+        Cierra el cuadro de alerta
+
+        Parámetros:
+            - :param:`page` (ft.Page): Página actual.
+            - :param:`alert` (ft.AlertDialog): Cuadro de alerta.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        alert.open = False
+        page.update()
+
+
+    def _send_button_on_click(self, _: ft.ControlEvent, page) -> None:
+        """
+        Permite enviar la comanda al SCD y regresa el botón a su estado original
+
+        Parámetros:
+            - :param:`_` (ft.ControlEvent): Evento de hacer clic en el botón.
+            - :param:`page` (ft.Page): Página actual.
+
+        Regresa:
+            - No regresa ningún valor.
+        """
+
+        # Se crea el cuadro de alerta
+        alert: ft.AlertDialog = ft.AlertDialog(
+            # Título del cuadro de alerta
+            title = ft.Text(
+                "No se puede enviar la comanda",
+                font_family = styles["alert"]["font"],
+                size = styles["alert"]["title_font_size"],
+                color = styles["alert"]["font_color"],
+                weight = ft.FontWeight.W_500,
+                text_align = ft.TextAlign.CENTER
+            ),
+            # Mensaje del cuadro de alerta
+            content = ft.Text(
+                "Por favor, verifica que hayan productos en el resumen de la comanda, y\nque el nombre del cliente y quién esté atendiendo no estén vacíos.",
+                font_family = styles["alert"]["font"],
+                size = styles["alert"]["content_font_size"],
+                color = styles["alert"]["font_color"],
+                weight = ft.FontWeight.W_300,
+                text_align = ft.TextAlign.CENTER
+            ),
+            # Botón para cerrar el cuadro de alerta
+            actions = [
+                # Botón como un objeto de la clase ft.Container
+                ft.Container(
+                    width = styles["alert"]["button_width"],
+                    bgcolor = styles["alert"]["bgcolor"],
+                    border = ft.border.all(0, styles["alert"]["border_color"]),
+                    border_radius = ft.border_radius.all(styles["alert"]["border_radius"]),
+                    alignment = ft.alignment.center,
+                    # Contenido del botón
+                    content = ft.Text(
+                        "Cerrar",
+                        font_family = styles["alert"]["font"],
+                        size = styles["alert"]["content_font_size"],
+                        color = styles["alert"]["font_color"],
+                        weight = ft.FontWeight.W_300,
+                        text_align = ft.TextAlign.CENTER
+                    ),
+                    # Cierre del cuadro de alerta
+                    on_click = lambda _: self._close_alert(_, page, alert)
+                )
+            ],
+            # Align de los botones del cuadro de alerta -> Centro del cuadro de alerta
+            actions_alignment = ft.MainAxisAlignment.CENTER
+        )
+
+        # Se verifica que haya productos en el resumen de la comanda, y que el nombre
+        # del cliente y quién esté atendiendo no estén vacíos
+        params_to_verify: tuple[bool, bool] = (
+            not _on_screen_product_list.content.controls, _customer_name.value == ""
+        )
+
+        # Se abre el cuadro de alerta si no se cumplen las condiciones
+        if any(params_to_verify):
+            self._open_alert(page, alert)
+        # Si se cumplen las condiciones, se envia la comanda al Sistema Digital de Comandas (SCD)
+        # y se limpia la lista de productos, el total de la compra y el nombre del cliente
+        else:
+            self._clear_order_summary()
+
 
 
     def catalog_title() -> ft.Container:
@@ -269,7 +434,7 @@ class SCashier:
         return search_bar_content
 
 
-    def catalog() -> ft.Container:
+    def catalog(self) -> ft.Container:
         """
         Catálogo de productos.
 
@@ -280,32 +445,7 @@ class SCashier:
             - :return:`catalog_content` (ft.Container): Catálogo de productos.
         """
 
-        _counter: int = 0
-        _row_counter: int = 0
-
-        # Se recorre la lista de productos y se agregan a la lista de productos
-        for row in range(len(products)):
-            list_row = ft.Row(spacing = 1)
-            # Se agregan 4 productos por fila
-            for product in range(4):
-                try:
-                    # Se alterna el color de fondo de las filas
-                    is_odd_row: bool = _row_counter % 2 != 0
-                    # Se crea la tarjeta del producto
-                    product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                        is_odd_row, _on_screen_product_list, _product_list, _total
-                    )
-                    # Se agregan los productos a la lista de productos y aumenta el contador
-                    list_row.controls.append(product_card)
-                    _counter += 1
-
-                # Si se llega al final de la lista de productos, se termina el ciclo
-                except IndexError:
-                    break
-
-            # Se agregan las filas a la lista de productos
-            list_view.controls.append(list_row)
-            _row_counter += 1
+        self._build_catalog()
 
         # Se coloca la lista de productos dentro de un objeto de la clase ft.Container
         catalog_content = ft.Container(
@@ -317,7 +457,7 @@ class SCashier:
         return catalog_content
 
 
-    def customer_type_selector() -> ft.Container:
+    def customer_type_selector(self) -> ft.Container:
         """
         Selector de tipo de cliente.
 
@@ -345,14 +485,15 @@ class SCashier:
             ),
             options = [
                 ft.dropdown.Option("Cliente"),
-                ft.dropdown.Option("Empleado"),
-                ft.dropdown.Option("Socio")
+                ft.dropdown.Option(r"Empleado - 15% descuento"),
+                ft.dropdown.Option(r"Socio - 30% descuento")
             ],
             border_radius = styles["customer_type"]["border_radius"],
             bgcolor = styles["customer_type"]["bgcolor"],
             border_color = styles["customer_type"]["border_color"],
             focused_bgcolor = styles["customer_type"]["bgcolor"],
             focused_border_color = styles["customer_type"]["border_color"],
+            on_change = lambda _: self._apply_customer_type_discount(_, _dropdown.value)
         )
 
         selector_content: ft.Container = ft.Container(
@@ -448,12 +589,12 @@ class SCashier:
         return subtitle_content
 
 
-    def _buttons(self) -> ft.Container:
+    def _buttons(self, page) -> ft.Container:
         """
         Botones para cancelar la comanda o enviarla al Sistema Digital de Comandas (SCD).
 
         Parámetros:
-            - No recibe parámetros.
+            - :param:`page` (ft.Page): Página actual.
 
         Regresa:
             - :return:`buttons_content` (ft.Container): Botones para cancelar la comanda o enviarla al SCD.
@@ -498,7 +639,7 @@ class SCashier:
                 text_align = ft.TextAlign.CENTER
             ),
             on_hover = lambda _: self._button_on_hover(_, _send_button),
-            on_click = lambda _: self._send_button_on_click(_)
+            on_click = lambda _: self._send_button_on_click(_, page)
         )
 
         # Se colocan los botones dentro de un objeto de la clase ft.Container
@@ -515,7 +656,7 @@ class SCashier:
         return buttons_content
 
 
-    def order_summary() -> ft.Container:
+    def order_summary(page) -> ft.Container:
         """
         Resumen de la comanda.
 
@@ -524,7 +665,7 @@ class SCashier:
         de cancelar la comanda.
 
         Parámetros:
-            - No recibe parámetros.
+            - :param:`page` (ft.Page): Página actual.
 
         Regresa:
             - :return:`order_summary_content` (ft.Container): Resumen de la comanda.
@@ -535,7 +676,7 @@ class SCashier:
         # Subtítulo del cuadro de resumen
         _subtitle: ft.Container = SCashier._subtitle()
         # Botones para cancelar la comanda o enviarla al SCD
-        _buttons: ft.Container = SCashier()._buttons()
+        _buttons: ft.Container = SCashier()._buttons(page)
 
         order_summary_content: ft.Container = ft.Container(
             width = styles["card"]["width"],
