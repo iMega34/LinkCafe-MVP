@@ -195,6 +195,16 @@ class Styles:
                 "tint_color" : "#404040",
                 "shadow_color" : "#656565"
             },
+            "alert" : {
+                "button_width" : 200,
+                "border_radius" : 25,
+                "title_font_size" : 30,
+                "content_font_size" : 20,
+                "font": "Arbutus Slab",
+                "font_color" : "#FFFFFF",
+                "bgcolor" : "#1C1E24",
+                "border_color" : "#404040",
+            },
             "product_list" : {
                 "width" : 650,
                 "height" : 365,
