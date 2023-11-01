@@ -18,31 +18,35 @@ El sistema consta de tres elementos principales:
 
 ## Preview del sistema
 
-#### Página de inicio
+#### Página de inicio - En desarrollo...
 
 ![Preview del sistema](/assets/previews/preview_inicio.png "Preview del sistema")
 
 La página de inicio del sistema muestra un mensaje de bienvenida, un botón para acceder al sistema de caja y otro para acceder al Sistema Digital de Comandas (SDC).
 
-#### Página de caja - En desarrollo
+#### Ventana de caja - ¡Completada!
 
-![Preview del sistema](/assets/previews/preview_caja_v_0_2_0-alpha.gif "Preview del sistema")
+![Preview del sistema](/assets/previews/preview_caja_v_0_3_0-alpha_final.gif "Preview del sistema")
 
-La página de caja muestra el resumen de la compra del cliente y el catálogo de productos. El resumen de la compra muestra el total de la compra, los productos y sus cantidades en la comanda, el botón para enviar al SDC, el botón para cancelar la comanda y el nombre del cliente asociado a la orden. El catálogo de productos muestra los productos disponibles con su respectiva imagen, nombre y precio.
+La ventana de caja muestra el resumen de la compra del cliente y el catálogo de productos. El resumen de la compra muestra el total de la compra, los productos y sus cantidades en la comanda, el botón para enviar al SDC, el botón para cancelar la comanda y el nombre del cliente asociado a la orden. El catálogo de productos muestra los productos disponibles con su respectiva imagen, nombre y precio.
 
 Además gestionará el inventario de productos disponibles en el local, pues se busca automatizar el proceso para el corte de caja y la disponibilidad de productos en Rappi.
 
-#### Página de visualización del Sistema Digital de Comandas (SDC) - Pendiente
+#### Ventana de visualización del Sistema Digital de Comandas (SDC) - Pendiente
 
-La página de visualización del SDC muestra las comandas cargadas al sistema en tiempo real. Cada comanda muestra el nombre del cliente asociado a la orden, el resumen de la orden, el botón para marcar la orden como completada, el botón para editar la orden y el botón para cancelar la orden; traerán un distintivo que indicará la proveniencia de la orden (caja, menú digital o Rappi).
+La ventana de visualización del SDC muestra las comandas cargadas al sistema en tiempo real. Cada comanda muestra el nombre del cliente asociado a la orden, el resumen de la orden, el botón para marcar la orden como completada, el botón para editar la orden y el botón para cancelar la orden; traerán un distintivo que indicará la proveniencia de la orden (caja, menú digital o Rappi).
 
-#### Página de menú digital - Pendiente
+#### Ventana del menú digital - Pendiente
 
-La página de menú digital muestra el catálogo de productos disponibles con su respectiva imagen, nombre y precio. Cada producto cuenta con un botón para agregarlo al carrito. El carrito muestra el resumen de la compra, el botón para enviar al SDC, el botón para cancelar la comanda y el nombre del cliente asociado a la orden.
+La ventana de menú digital muestra el catálogo de productos disponibles con su respectiva imagen, nombre y precio. Cada producto cuenta con un botón para agregarlo al carrito. El carrito muestra el resumen de la compra, el botón para enviar al SDC, el botón para cancelar la comanda y el nombre del cliente asociado a la orden.
 
-#### Página de corte de caja - Pendiente
+#### Ventana de corte de caja - Pendiente
 
-La página de corte de caja muestra el resumen de las ventas del día: el total de efectivo en caja, el total de ventas en efectivo, el total de ventas con tarjeta, el total de ventas con Rappi, el total de ventas con menú digital y el total de ventas en general. Al finalizar el corte de caja se enviará un reporte por correo electrónico con el resumen de las ventas del día.
+La ventana de corte de caja muestra el resumen de las ventas del día: el total de efectivo en caja, el total de ventas en efectivo, el total de ventas con tarjeta, el total de ventas con Rappi, el total de ventas con menú digital y el total de ventas en general. Al finalizar el corte de caja se enviará un reporte por correo electrónico con el resumen de las ventas del día.
+
+#### Ventana del Sistema Complementario de Recetas (SCR) - Pendiente
+
+La ventana del SCR muestra las recetas de los productos que se elaboran en la fábrica de Trigali. Cada receta muestra el nombre del producto, la imagen de referencia, los ingredientes y sus cantidades, el botón para agregar o eliminar la receta de la lista de recetas a elaborar y el botón para enviar la lista de recetas al Sistema Digital de Fábrica (SDF).
 
 ## Presentación del proyecto
 
@@ -54,13 +58,24 @@ La página de corte de caja muestra el resumen de las ventas del día: el total 
 
   - Establecida la estructura general del proyecto.
   - Creación de la página de inicio del sistema.
-  - Página de **Caja** en proceso.
+  - Ventana de **Caja** en proceso.
 
 #### v0.2.0-alpha
 
-  - Página de **Caja** funcional en la interacción con el usuario.
+  - Ventana de **Caja** funcional, con interacción mínima con el usuario.
   - Widgets de barra de busqueda, total de la compra, botón de envío de comanda y botón de cancelación de comanda **en proceso**.
   - Ajustes menores en la arquitetura del proyecto, así como __refactorización__ de ciertos bloques de código.
+
+### v0.3.0-alpha
+
+  - Ventana de **Caja** **completada**
+  - Widgets de barra de busqueda, total de la compra, botón de envío de comanda y botón de cancelación de comanda **completados**.
+  - Añadidos los widgets de selección de tipo de pago, selección del empleado que atiende la caja, alerta de comanda no válida y alerta de comanda enviada.
+
+### v0.3.1-alpha
+
+  - Conexion con la base de datos **local** mediante el uso de _MySQL_.
+  - Conexion con la base de datos **en la nube** mediante el uso de _AWS_ con motor _MySQL_ **en proceso**.
 
 ## Planes a futuro
 
