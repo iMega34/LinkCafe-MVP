@@ -36,7 +36,7 @@ class DBConnection:
             - :return:`password` (str): Contraseña de la base de datos
         """
 
-        with open("other\db_password.txt", "r") as file:
+        with open("other/db_password.txt", "r") as file:
             password: str = file.read()
 
         return password
