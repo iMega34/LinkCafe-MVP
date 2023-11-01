@@ -195,6 +195,17 @@ class Styles:
                 "tint_color" : "#404040",
                 "shadow_color" : "#656565"
             },
+            "employee_selector" : {
+                "width" : 150,
+                "height" : 100,
+                "text_font_size" : 35,
+                "label_font_size" : 20,
+                "border_radius" : 15,
+                "font" : "Forum",
+                "font_color" : "#FFFFFF",
+                "bgcolor" : "#1C1E24",
+                "border_color" : "#404040",
+            },
             "alert" : {
                 "button_width" : 200,
                 "border_radius" : 25,
