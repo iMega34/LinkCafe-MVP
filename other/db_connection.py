@@ -25,7 +25,7 @@ class DBConnection:
         self._order_to_send: list = []
 
 
-    def _get_db_password() -> str:
+    def _get_db_password(self) -> str:
         """
         Obtiene la contraseña de la base de datos
 
@@ -36,7 +36,7 @@ class DBConnection:
             - :return:`password` (str): Contraseña de la base de datos
         """
 
-        with open("db_password.txt", "r") as file:
+        with open("other\db_password.txt", "r") as file:
             password: str = file.read()
 
         return password
