@@ -6,6 +6,16 @@ from other.product import Product
 from other.product_list import ProductList
 from other.product_card import ProductCard
 from other.product_table import ProductTable
+from other.db_connection import DBConnection
+
+
+# Conexión con la base de datos
+db_connection: DBConnection = DBConnection()
+# Lista de empleados
+employees: list[str] = db_connection.get_employees()
+# Convierte los empleados en opciones para el dropdown
+for idx, employee in enumerate(employees):
+    employees[idx] = ft.dropdown.Option(employee)
 
 
 # Tabla de productos
@@ -30,8 +40,30 @@ for index, row in product_table.iterrows():
 # Styles del archivo styles.py
 styles: dict[str] = Styles.cashier_styles()
 
+# Selector de empleado en caja
+_employee_selector_content: ft.Dropdown = ft.Dropdown(
+    value = "",
+    label = "Atiende:",
+    label_style = ft.TextStyle(
+        font_family = styles["employee_selector"]["font"],
+        size = styles["employee_selector"]["label_font_size"],
+        color = styles["employee_selector"]["font_color"],
+    ),
+    text_style = ft.TextStyle(
+        font_family = styles["employee_selector"]["font"],
+        size = styles["employee_selector"]["text_font_size"],
+        color = styles["employee_selector"]["font_color"],
+    ),
+    options = employees,
+    border_radius = styles["employee_selector"]["border_radius"],
+    bgcolor = styles["employee_selector"]["bgcolor"],
+    border_color = styles["employee_selector"]["border_color"],
+    focused_bgcolor = styles["employee_selector"]["bgcolor"],
+    focused_border_color = styles["employee_selector"]["border_color"],
+)
+
 # Nombre del cliente
-_customer_name: ft.TextField = ft.TextField(
+_customer_name_text_field: ft.TextField = ft.TextField(
     label = "Nombre del cliente",
     label_style = ft.TextStyle(
         font_family = styles["title"]["font"],
@@ -77,7 +109,7 @@ _total: ft.Container = ft.Container(
 )
 
 # Objeto de la clase ft.ListView para contener los productos del catálogo
-list_view: ft.ListView = ft.ListView(
+_list_view: ft.ListView = ft.ListView(
     spacing = styles["catalog"]["spacing"],
     width = styles["catalog"]["width_list"],
     height = styles["catalog"]["height"],
@@ -136,7 +168,7 @@ class SCashier:
                     is_odd_row: bool = _row_counter % 2 != 0
                     # Se crea la tarjeta del producto
                     product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                        is_odd_row, _on_screen_product_list, _product_list, _total, list_view.key
+                        is_odd_row, _on_screen_product_list, _product_list, _total, _list_view.key
                     )
                     # Se agregan los productos a la lista de productos y aumenta el contador
                     list_row.controls.append(product_card)
@@ -147,7 +179,7 @@ class SCashier:
                     break
 
             # Se agregan las filas a la lista de productos
-            list_view.controls.append(list_row)
+            _list_view.controls.append(list_row)
             _row_counter += 1
 
 
@@ -168,7 +200,7 @@ class SCashier:
         """
 
         # Se limpia la lista de productos
-        list_view.controls.clear()
+        _list_view.controls.clear()
 
         _counter: int = 0
         _row_counter: int = 0
@@ -183,7 +215,7 @@ class SCashier:
                     is_odd_row: bool = _row_counter % 2 != 0
                     # Se crea la tarjeta del producto
                     product_card: ft.Card = ProductCard(products[_counter]).build_card(
-                        is_odd_row, _on_screen_product_list, _product_list, _total, list_view.key
+                        is_odd_row, _on_screen_product_list, _product_list, _total, _list_view.key
                     )
                     # Se agregan los productos a la lista de productos solo si coinciden
                     # con el texto ingresado
@@ -196,11 +228,11 @@ class SCashier:
                     break
 
             # Se agregan las filas a la lista de productos
-            list_view.controls.append(list_row)
+            _list_view.controls.append(list_row)
             _row_counter += 1
 
         # Se actualiza la lista de productos
-        list_view.update()
+        _list_view.update()
 
 
     def _apply_customer_type_discount(self, _: ft.ControlEvent, customer_type: str) -> None:
@@ -216,15 +248,15 @@ class SCashier:
         """
 
         # Se limpia la lista de productos y se actualiza el tipo de cliente
-        list_view.controls.clear()
-        list_view.key = customer_type
+        _list_view.controls.clear()
+        _list_view.key = customer_type
 
         # Se aplica el descuento correspondiente al tipo de cliente y 
         # se muestran los nuevos precios
         self._build_catalog()
 
         # Se actualiza la lista de productos
-        list_view.update()
+        _list_view.update()
 
 
     def _clear_order_summary(self) -> None:
@@ -238,11 +270,19 @@ class SCashier:
             - No regresa ningún valor.
         """
 
+        # Limpia la lista de productos
         _product_list.clear()
-        _customer_name.value = ""
-        _customer_name.update()
+        # Limpia el nombre del cliente
+        _customer_name_text_field.value = ""
+        _customer_name_text_field.update()
+        # Limpia el selector de empleado en caja
+        _employee_selector_content.value = ""
+        _employee_selector_content.clean()
+        _employee_selector_content.update()
+        # Limpia la lista de productos que se muestran en el resumen de la comanda
         _on_screen_product_list.content.controls.clear()
         _on_screen_product_list.update()
+        # Limpia el total de la compra
         _total.content.value = f"Total: ${_product_list._total}"
         _total.update()
 
@@ -356,7 +396,9 @@ class SCashier:
         # Se verifica que haya productos en el resumen de la comanda, y que el nombre
         # del cliente y quién esté atendiendo no estén vacíos
         params_to_verify: tuple[bool, bool] = (
-            not _on_screen_product_list.content.controls, _customer_name.value == ""
+            not _on_screen_product_list.content.controls,
+            _customer_name_text_field.value == "",
+            _employee_selector_content.value == ""
         )
 
         # Se abre el cuadro de alerta si no se cumplen las condiciones
@@ -365,8 +407,25 @@ class SCashier:
         # Si se cumplen las condiciones, se envia la comanda al Sistema Digital de Comandas (SCD)
         # y se limpia la lista de productos, el total de la compra y el nombre del cliente
         else:
-            self._clear_order_summary()
+            # Se guardan los datos de la comanda en un diccionario
+            order: dict[str] = {
+                "customer_name" : _customer_name_text_field.value,
+                "products_and_quantities" : _product_list._quantity_ref_dict,
+                "total" : _product_list._total,
+                "employee" : _employee_selector_content.value,
+            }
 
+            # Se envía la comanda al SCD
+            db_connection.send_order_to_db(order)
+
+            # Se crea el cuadro de alerta
+            alert.title.value = "¡Comanda enviada!"
+            alert.content.value = "La comanda se ha enviado correctamente al Sistema Digital de Comandas."
+
+            # Se abre el cuadro de alerta
+            self._open_alert(page, alert)
+
+            self._clear_order_summary()
 
 
     def catalog_title() -> ft.Container:
@@ -451,7 +510,7 @@ class SCashier:
         catalog_content = ft.Container(
             width = styles["catalog"]["width_container"],
             alignment = ft.alignment.center,
-            content = list_view,
+            content = _list_view,
         )
 
         return catalog_content
@@ -527,6 +586,19 @@ class SCashier:
             text_align = ft.TextAlign.CENTER
         )
 
+        # Selector de empleado en caja
+        _employee_selector: ft.Container = ft.Container(
+            width = styles["employee_selector"]["width"],
+            height = styles["employee_selector"]["height"],
+            alignment = ft.alignment.center,
+            content = _employee_selector_content
+        )
+
+        # Nombre del cliente
+        _customer_name: ft.Container = ft.Container(
+            content = _customer_name_text_field
+        )
+
         # Se coloca el título y el cuadro de texto para el nombre del cliente dentro
         # de un objeto de la clase ft.Container
         title_content: ft.Container = ft.Container(
@@ -534,10 +606,12 @@ class SCashier:
             content = ft.Row(
                 alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls = [
+                    # Título del cuadro de resumen
                     _title_text,
-                    ft.Container(
-                        content = _customer_name
-                    )
+                    # Selector de empleado en caja
+                    _employee_selector,
+                    # Cuadro de texto para el nombre del cliente
+                    _customer_name
                 ]
             )
         )
