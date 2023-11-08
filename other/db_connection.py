@@ -1,6 +1,7 @@
 
 from mysql.connector import MySQLConnection, connect
 from mysql.connector.cursor import MySQLCursor
+from time import strftime
 
 
 class DBConnection:
@@ -12,12 +13,14 @@ class DBConnection:
     """
 
     def __init__(self) -> None:
+        # Host y contraseña de la base de datos
+        self.__host, self.__password = self._get_db_info()
         # Atributos privados
         self.__database: MySQLConnection = connect(
-            host = "localhost",
-            user = "root",
-            password = self._get_db_password(),
-            database = "trigali_test_database"
+            host = self.__host,
+            user = "admin",
+            password = self.__password,
+            database = "test_database"
         )
         # Atributos protegidos
         self._cursor: MySQLCursor = self.__database.cursor()
@@ -25,21 +28,21 @@ class DBConnection:
         self._order_to_send: list = []
 
 
-    def _get_db_password(self) -> str:
+    def _get_db_info(self) -> tuple[str]:
         """
-        Obtiene la contraseña de la base de datos
+        Obtiene la información de la base de datos
 
         Parámetros:
             - No recibe parámetros.
 
         Regresa:
-            - :return:`password` (str): Contraseña de la base de datos
+            - :return:`db_info` (tuple[str]): Tupla con la información de la base de datos
         """
 
-        with open("other/db_password.txt", "r") as file:
-            password: str = file.read()
+        with open("other\db_info.txt", "r") as file:
+            db_info: tuple[str] = tuple(file.read().splitlines())
 
-        return password
+        return db_info
 
 
     def get_employees(self) -> list[str]:
@@ -84,8 +87,12 @@ class DBConnection:
         else:
             products_and_quantities_str = products_and_quantities_str[0:products_and_quantities_str.rfind(", ")]
 
-        sql: str = "INSERT INTO orders (customer_name, products_n_quantities, total, employee, active) VALUES (%s, %s, %s, %s, 1)"
-        values: tuple[str] = (order["customer_name"], products_and_quantities_str, order["total"], order["employee"])
+        # Obtiene la fecha y hora actual
+        date: str = strftime("%d/%b/%Y")
+        time: str = strftime("%H:%M:%S")
+
+        sql: str = "INSERT INTO orders (customer_name, products_n_quantities, total, employee, active, date, hour) VALUES (%s, %s, %s, %s, 1, %s, %s)"
+        values: tuple[str] = (order["customer_name"], products_and_quantities_str, order["total"], order["employee"], date, time)
 
         # Envía la orden a la base de datos
         self._cursor.execute(sql, values)
