@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 other/passwords.txt
 other/db_password.txt
+other/db_info.txt
