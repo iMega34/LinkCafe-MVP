@@ -77,6 +77,10 @@ La ventana del SCR muestra las recetas de los productos que se elaboran en la f�
   - Conexion con la base de datos **local** mediante el uso de _MySQL_.
   - Conexion con la base de datos **en la nube** mediante el uso de _AWS_ con motor _MySQL_ **en proceso**.
 
+### v0.3.2-alpha
+
+  - Conexion con la base de datos **en la nube** mediante el uso de _AWS_ con motor _MySQL_ **completada**.
+
 ## Planes a futuro
 
   - Implementación de sistema de trazabilidad de productos accesible a los clientes mediante un código QR y basado en la tecnología _blockchain_.
