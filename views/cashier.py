@@ -17,8 +17,6 @@ def Cashier(page: ft.Page) -> ft.Column:
     Regresa un objeto de la clase :class:`ft.Column`
     """
 
-    # Catálogo de productos
-
     # Resumen de la comanda
     order_summary: ft.Container = SCashier.order_summary(page)
     # Título de catálogo de productos
