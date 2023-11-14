@@ -241,19 +241,33 @@ class Styles:
 
         orders_style_dict: dict[str] = {
             "title" : {
-                "height" : 100,
                 "font" : "Tenor Sans",
-                "font_size" : 50,
+                "font_size" : 70,
                 "font_color" : "#FFFFFF"
             },
-            "logo" : {
-                "width" : 700,
-                "height" : 375
+            "list" : {
+                "spacing" : 1,
             },
-            "button_row" : {
-                "width" : 900,
-                "height" : 150,
-                "spacing" : 75
+            "card": {
+                "width" : 530,
+                "padding" : 25,
+                "border_radius" : 40,
+                "bgcolor" : "#25242B",
+                "shadow_color" : "#404040",
+                "font_color" : "#FFFFFF"
+            },
+            "counter" : {
+                "width" : 775,
+                "spacing" : 25,
+                "font" : "Forum",
+                "font_size" : 35,
+                "font_color" : "#FFFFFF",
+                "pos_color" : "#FFC61A",
+                "rappi_color" : "#FF4219",
+                "digital_menu_color" : "#059FD1",
+                "tag_border_radius" : 15,
+                "tag_width" : 45,
+                "tag_height" : 35,
             },
             "button" : {
                 "button_width" : 350,
