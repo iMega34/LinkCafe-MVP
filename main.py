@@ -25,7 +25,7 @@ def main(page: ft.Page) -> None:
     page.add(router.view)
 
     # Se accede a la pagina de inicio
-    page.go('/cashier')
+    page.go('/orders')
 
 
 if __name__ == "__main__":
