@@ -119,7 +119,7 @@ class DBConnection:
 
         # Se crea un diccionario con las órdenes
         for order in db_rows:
-            id, name, products_n_quantities, total, origin = order[0], order[1], order[2], order[3], order[5]
+            id, name, products_n_quantities, total, origin, hour = order[0], order[1], order[2], order[3], order[5], order[8]
             products_n_quantities_list: list[str] = products_n_quantities.split(", ")
             products_n_quantities_dict: dict[str, str] = {}
 
@@ -130,9 +130,10 @@ class DBConnection:
 
             # Se agrega la orden al diccionario de órdenes
             orders[id] = {
-                "name" : name,
+                "customer_name" : name,
                 "products_n_quantities" : products_n_quantities_dict,
                 "total" : total,
+                "hour": hour[0:5],
                 "origin" : origin
             }
 
