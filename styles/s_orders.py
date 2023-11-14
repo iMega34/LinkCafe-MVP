@@ -2,6 +2,7 @@
 import flet as ft
 
 from styles.styles import Styles
+from other.order_card import OrderCard
 from other.db_connection import DBConnection
 
 
@@ -22,7 +23,10 @@ rappi_orders: int = 0
 digital_menu_orders: int = 0
 
 # Objeto de la clase ft.ListView para contener los productos del catálogo
-_list_view: ft.ListView = ft.ListView()
+_list_view: ft.ListView = ft.ListView(
+    horizontal = True,
+    spacing = styles["list"]["spacing"],
+)
 
 
 class SOrders:
@@ -42,31 +46,19 @@ class SOrders:
             - No regresa ningún valor.
         """
 
-        _order_id: ft.Container = ft.Container(
-            alignment = ft.alignment.center,
-            content = ft.Text(
-
-            )
-        )
-
         for id, details in orders.items():
-            card_content: ft.Container = ft.Container(
-                border_radius = ft.border_radius.all(styles["card"]["border_radius"]),
-                width = styles["card"]["width"],
-                bgcolor = styles["card"]["bgcolor"],
-                padding = styles["card"]["padding"],
-                shadow = ft.BoxShadow(
-                    color = "#000000",
-                    offset = ft.Offset(0, 12)
-                ),
-                # Contenido de la tarjeta de la orden
-                content = ft.Column(
-                    alignment = ft.MainAxisAlignment.CENTER,
-                    controls = [
 
-                    ]
-                )
-            )
+            # Se extraen los datos de la orden
+            customer_name: str = details["customer_name"]
+            products_n_quantities: str = details["products_n_quantities"]
+            total: str = details["total"]
+            hour: str = details["hour"]
+            origin: str = details["origin"]
+
+            # Tarjeta de orden
+            order_card: ft.Card = OrderCard(id, customer_name, products_n_quantities, total, hour, origin).build_card()
+
+            _list_view.controls.append(order_card)
 
 
     def _calculate_order_quantity_by_origin(self) -> None:
@@ -146,14 +138,15 @@ class SOrders:
         """
 
         title_content: ft.Container = ft.Container(
-            alignment = ft.alignment.center,
+            width = styles["title"]["width"],
+            alignment = ft.alignment.center_left,
             content = ft.Text(
                 "Órdenes",
                 font_family = styles["title"]["font"],
                 size = styles["title"]["font_size"],
                 color = styles["title"]["font_color"],
                 weight = ft.FontWeight.W_300,
-                text_align = ft.TextAlign.CENTER
+                text_align = ft.TextAlign.START
             )
         )
 
@@ -236,7 +229,6 @@ class SOrders:
         self._build_order_list()
 
         order_list_content: ft.Container = ft.Container(
-            border = ft.border.all(1, "#FF0000"),
             expand = True,
             content = _list_view
         )

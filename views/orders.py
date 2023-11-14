@@ -38,7 +38,7 @@ def Orders(page: ft.Page) -> ft.Column:
                     controls = [
                         # Título de la lista de órdenes y contador de órdenes
                         ft.Row(
-                            alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
+                            alignment = ft.MainAxisAlignment.SPACE_AROUND,
                             controls = [
                                 title,
                                 orders_counter
