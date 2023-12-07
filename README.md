@@ -1,7 +1,7 @@
 
-# Proyecto de digitalización de Trigali
+# Prototipo de plataforma digital de LinkCafé Solutions
 
-eTrigali. Sistema de caja, comandas y menú digital
+Sistema de caja, comandas y menú digital
 
 ## Descripción
 
