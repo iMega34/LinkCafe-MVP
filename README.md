@@ -48,10 +48,6 @@ La ventana de corte de caja muestra el resumen de las ventas del día: el total 
 
 La ventana del SCR muestra las recetas de los productos que se elaboran en la fábrica de Trigali. Cada receta muestra el nombre del producto, la imagen de referencia, los ingredientes y sus cantidades, el botón para agregar o eliminar la receta de la lista de recetas a elaborar y el botón para enviar la lista de recetas al Sistema Digital de Fábrica (SDF).
 
-## Presentación del proyecto
-
-[Presentación del proyecto](https://www.canva.com/design/DAFtLa90Y5g/hfpBiFyKO_-vv-mgCCOl8Q/edit?utm_content=DAFtLa90Y5g&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton "Proyecto de digitalización de Trigali - eTrigali") en Canva.
-
 ## Registro de avances
 
 #### v0.1.0-alpha
